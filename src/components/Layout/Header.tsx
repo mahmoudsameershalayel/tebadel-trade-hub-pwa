@@ -29,6 +29,13 @@ const Header = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
   };
 
+  const getUserDisplayName = () => {
+    if (state.user?.firstName && state.user?.lastName) {
+      return `${state.user.firstName} ${state.user.lastName}`;
+    }
+    return state.user?.phone || 'User';
+  };
+
   const NavigationLinks = ({ mobile = false, onItemClick = () => {} }) => (
     <>
       <Link
@@ -109,7 +116,7 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="hidden sm:flex">
                     <User className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
-                    {state.user?.name}
+                    {getUserDisplayName()}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
@@ -165,11 +172,19 @@ const Header = () => {
                 </Button>
 
                 {state.isAuthenticated ? (
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <span className="text-sm text-gray-600">{state.user?.name}</span>
-                    <Button variant="ghost" size="sm" onClick={handleLogout}>
-                      {t('nav.logout')}
-                    </Button>
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-sm text-gray-600">{getUserDisplayName()}</span>
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        navigate('/profile');
+                        setIsMenuOpen(false);
+                      }}>
+                        {t('nav.profile')}
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={handleLogout}>
+                        {t('nav.logout')}
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2 rtl:space-x-reverse sm:hidden">

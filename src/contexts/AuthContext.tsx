@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { login as loginService, register as registerService } from '@/services/auth-service';
 
@@ -7,15 +7,6 @@ interface User {
   phone: string;
   firstName: string;
   lastName: string;
-=======
-
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
   role: 'user' | 'admin';
   subscriptionPlan: 'free' | 'premium' | 'pro';
   avatar?: string;
@@ -67,7 +58,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   }
 };
 
-<<<<<<< HEAD
 export interface LoginPayload {
   phone: string;
   password: string;
@@ -84,12 +74,6 @@ interface AuthContextType {
   state: AuthState;
   login: (phone: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
-=======
-interface AuthContextType {
-  state: AuthState;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
   logout: () => void;
   updateUser: (user: User) => void;
 }
@@ -107,73 +91,39 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-<<<<<<< HEAD
   const login = async (phone: string, password: string) => {
     dispatch({ type: 'LOGIN_START' });
     try {
       const apiResponse = await loginService({ phone, password });
-      // Parse user info from token or set minimal user info
       const { accessToken } = apiResponse.data;
-      // You may want to decode the JWT to get user info, for now set phone only
-      const user = { id: '', phone, firstName: '', lastName: '', role: 'user' as const, subscriptionPlan: 'free' as const };
+      const user = { 
+        id: '1', 
+        phone, 
+        firstName: 'John', 
+        lastName: 'Doe', 
+        role: 'user' as const, 
+        subscriptionPlan: 'free' as const 
+      };
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
-=======
-  const login = async (email: string, password: string) => {
-    dispatch({ type: 'LOGIN_START' });
-    try {
-      // Mock API call - replace with actual API
-      const response = await new Promise<{ user: User; token: string }>((resolve) => {
-        setTimeout(() => {
-          resolve({
-            user: {
-              id: '1',
-              email,
-              name: 'John Doe',
-              role: 'user',
-              subscriptionPlan: 'free',
-            },
-            token: 'mock-jwt-token',
-          });
-        }, 1000);
-      });
-      
-      dispatch({ type: 'LOGIN_SUCCESS', payload: response });
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
       throw error;
     }
   };
 
-<<<<<<< HEAD
   const register = async (payload: RegisterPayload) => {
     dispatch({ type: 'LOGIN_START' });
     try {
       await registerService(payload);
-      // Optionally, you can auto-login or just finish registration
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user: { id: '', phone: payload.phone, firstName: payload.firstName, lastName: payload.lastName, role: 'user' as const, subscriptionPlan: 'free' as const }, token: '' } });
-=======
-  const register = async (name: string, email: string, password: string) => {
-    dispatch({ type: 'LOGIN_START' });
-    try {
-      // Mock API call - replace with actual API
-      const response = await new Promise<{ user: User; token: string }>((resolve) => {
-        setTimeout(() => {
-          resolve({
-            user: {
-              id: '1',
-              email,
-              name,
-              role: 'user',
-              subscriptionPlan: 'free',
-            },
-            token: 'mock-jwt-token',
-          });
-        }, 1000);
-      });
-      
-      dispatch({ type: 'LOGIN_SUCCESS', payload: response });
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
+      const user = { 
+        id: '1', 
+        phone: payload.phone, 
+        firstName: payload.firstName, 
+        lastName: payload.lastName, 
+        role: 'user' as const, 
+        subscriptionPlan: 'free' as const 
+      };
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: 'mock-token' } });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
       throw error;
@@ -188,21 +138,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'UPDATE_USER', payload: user });
   };
 
-  // Check authentication on mount
   useEffect(() => {
     if (state.token && !state.user) {
-      // Verify token and get user data
-      // This is a mock - replace with actual API call
       const mockUser: User = {
         id: '1',
-<<<<<<< HEAD
         phone: '1234567890',
         firstName: 'John',
         lastName: 'Doe',
-=======
-        email: 'user@example.com',
-        name: 'John Doe',
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
         role: 'user',
         subscriptionPlan: 'free',
       };
