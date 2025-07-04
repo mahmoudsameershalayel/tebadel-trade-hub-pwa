@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,8 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-<<<<<<< HEAD
-import { Package, Mail, Lock, Phone } from 'lucide-react';
+import { Package, Lock, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
 const LoginForm = () => {
@@ -19,26 +15,12 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const { login, state } = useAuth();
   const { t, isRTL } = useLanguage();
-=======
-import { Package, Mail, Lock } from 'lucide-react';
-import { toast } from 'sonner';
-
-const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login, state } = useAuth();
-  const { t } = useLanguage();
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
       await login(phone, password);
-=======
-      await login(email, password);
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
@@ -61,7 +43,6 @@ const LoginForm = () => {
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-<<<<<<< HEAD
               <Label htmlFor="phone">{t('auth.phone')}</Label>
               <div className="relative">
                 <Phone className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 rtl:right-3 ltr:left-3 h-5 w-5" />
@@ -74,29 +55,10 @@ const LoginForm = () => {
                   placeholder={t('auth.phoneHolder')}
                   required
                   dir={isRTL ? "rtl" : "ltr"}
-
-                />
-              </div>
-
-            </div>
-
-=======
-              <Label htmlFor="email">{t('auth.email')}</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400 rtl:left-auto rtl:right-3" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 rtl:pl-3 rtl:pr-10"
-                  placeholder="Enter your email"
-                  required
                 />
               </div>
             </div>
-            
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
+
             <div className="space-y-2">
               <Label htmlFor="password">{t('auth.password')}</Label>
               <div className="relative">
@@ -107,23 +69,14 @@ const LoginForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 rtl:pl-3 rtl:pr-10"
-<<<<<<< HEAD
                   placeholder={t('auth.passwordHandler')}
-=======
-                  placeholder="Enter your password" 
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
                   required
                 />
               </div>
             </div>
 
-<<<<<<< HEAD
             <Button
               type="submit"
-=======
-            <Button 
-              type="submit" 
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
               className="w-full"
               disabled={state.isLoading}
             >
@@ -132,13 +85,8 @@ const LoginForm = () => {
           </form>
 
           <div className="text-center">
-<<<<<<< HEAD
             <Link
               to="/register"
-=======
-            <Link 
-              to="/register" 
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
               className="text-sm text-emerald-600 hover:text-emerald-700 transition-colors"
             >
               {t('auth.switchToRegister')}

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface LanguageContextType {
@@ -23,7 +20,6 @@ const translations = {
     'nav.login': 'Login',
     'nav.register': 'Register',
     'nav.logout': 'Logout',
-<<<<<<< HEAD
 
     // Auth
     'auth.welcome': 'Welcome to Tebadel',
@@ -36,20 +32,10 @@ const translations = {
     'auth.name': 'Full Name',
     'auth.firstName': 'First Name',
     'auth.lastName': 'Last Name',
-=======
-    
-    // Auth
-    'auth.welcome': 'Welcome to Tebadel',
-    'auth.subtitle': 'Trade items without money',
-    'auth.email': 'Email',
-    'auth.password': 'Password',
-    'auth.name': 'Full Name',
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     'auth.loginButton': 'Sign In',
     'auth.registerButton': 'Create Account',
     'auth.switchToRegister': "Don't have an account? Sign up",
     'auth.switchToLogin': 'Already have an account? Sign in',
-<<<<<<< HEAD
     'auth.firstNameHolder': 'Enter your first name',
     'auth.lastNameHolder': 'Enter your last name',
     'auth.passwordHolder': 'Enter your password',
@@ -67,20 +53,6 @@ const translations = {
     'landing.featuresSubtitle': 'Experience the easiest and safest way to trade items — with optional cash difference when needed.',
     'landing.feature1.title': 'Trade Anything',
     'landing.feature1.description': 'Exchange items without direct selling — and add or receive a money difference if necessary.',
-=======
-    
-    // Landing Page
-    'landing.badge': 'The Future of Trading',
-    'landing.heroTitle': 'Trade Items,',
-    'landing.heroTitleHighlight': ' Not Money',
-    'landing.heroSubtitle': 'Join thousands of users who are already trading items they don\'t need for things they want. The modern barter system that connects communities worldwide.',
-    'landing.getStarted': 'Get Started Free',
-    'landing.signIn': 'Sign In',
-    'landing.featuresTitle': 'Why Choose Tebadel?',
-    'landing.featuresSubtitle': 'Experience the easiest and most secure way to trade items with people in your community.',
-    'landing.feature1.title': 'Trade Anything',
-    'landing.feature1.description': 'Exchange items without money. From electronics to books, find what you need.',
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     'landing.feature2.title': 'Safe Community',
     'landing.feature2.description': 'Join a trusted community of traders with verified profiles and ratings.',
     'landing.feature3.title': 'Secure Trading',
@@ -93,12 +65,8 @@ const translations = {
     'landing.ctaTitle': 'Ready to Start Trading?',
     'landing.ctaSubtitle': 'Join our community today and discover the joy of sustainable trading.',
     'landing.ctaButton': 'Create Your Account',
-<<<<<<< HEAD
     'landing.message': 'With Tabaadl, money is optional — only when you need it.',
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Items
     'items.title': 'Available Items',
     'items.search': 'Search items...',
@@ -107,11 +75,7 @@ const translations = {
     'items.postNew': 'Post New Item',
     'items.myItems': 'My Items',
     'items.noItems': 'No items found',
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Trading & Money Difference
     'trade.makeOffer': 'Make Offer',
     'trade.moneyDifference': 'Money Difference',
@@ -129,11 +93,7 @@ const translations = {
     'trade.rejectOffer': 'Reject Offer',
     'trade.counterOffer': 'Counter Offer',
     'trade.negotiate': 'Negotiate',
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Something went wrong',
@@ -157,7 +117,6 @@ const translations = {
     'nav.login': 'تسجيل الدخول',
     'nav.register': 'إنشاء حساب',
     'nav.logout': 'تسجيل خروج',
-<<<<<<< HEAD
 
     // Auth
     'auth.welcome': 'مرحباً بك في تبادل',
@@ -191,31 +150,6 @@ const translations = {
     'landing.featuresSubtitle': 'اختبر أسهل وأأمن طريقة لتبادل الأشياء مع إمكانية دفع أو استلام فرق نقدي حسب الاتفاق.',
     'landing.feature1.title': 'تبادل أي شيء',
     'landing.feature1.description': 'تبادل الأشياء بدون بيع مباشر — ويمكنك دفع أو استلام فرق نقدي حسب رغبتك.',
-=======
-    
-    // Auth
-    'auth.welcome': 'مرحباً بك في تبادل',
-    'auth.subtitle': 'تبادل الأشياء بدون نقود',
-    'auth.email': 'البريد الإلكتروني',
-    'auth.password': 'كلمة المرور',
-    'auth.name': 'الاسم الكامل',
-    'auth.loginButton': 'دخول',
-    'auth.registerButton': 'إنشاء حساب',
-    'auth.switchToRegister': 'ليس لديك حساب؟ سجل الآن',
-    'auth.switchToLogin': 'لديك حساب؟ سجل دخولك',
-    
-    // Landing Page
-    'landing.badge': 'مستقبل التجارة',
-    'landing.heroTitle': 'تبادل الأشياء،',
-    'landing.heroTitleHighlight': ' وليس المال',
-    'landing.heroSubtitle': 'انضم إلى آلاف المستخدمين الذين يتبادلون الأشياء التي لا يحتاجونها مقابل أشياء يريدونها. نظام المقايضة الحديث الذي يربط المجتمعات في جميع أنحاء العالم.',
-    'landing.getStarted': 'ابدأ مجاناً',
-    'landing.signIn': 'تسجيل الدخول',
-    'landing.featuresTitle': 'لماذا تختار تبادل؟',
-    'landing.featuresSubtitle': 'اختبر أسهل وأأمن طريقة لتبادل الأشياء مع الأشخاص في مجتمعك.',
-    'landing.feature1.title': 'تبادل أي شيء',
-    'landing.feature1.description': 'تبادل الأشياء بدون نقود. من الإلكترونيات إلى الكتب، اعثر على ما تحتاجه.',
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     'landing.feature2.title': 'مجتمع آمن',
     'landing.feature2.description': 'انضم إلى مجتمع موثوق من التجار مع ملفات شخصية وتقييمات محققة.',
     'landing.feature3.title': 'تداول آمن',
@@ -228,12 +162,8 @@ const translations = {
     'landing.ctaTitle': 'مستعد لبدء التداول؟',
     'landing.ctaSubtitle': 'انضم إلى مجتمعنا اليوم واكتشف متعة التداول المستدام.',
     'landing.ctaButton': 'أنشئ حسابك',
-<<<<<<< HEAD
     'landing.message': 'في تبادل، لا حاجة للمال دائمًا — فقط عندما تحتاجه.',
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Items
     'items.title': 'العناصر المتاحة',
     'items.search': 'البحث عن عناصر...',
@@ -242,11 +172,7 @@ const translations = {
     'items.postNew': 'نشر عنصر جديد',
     'items.myItems': 'عناصري',
     'items.noItems': 'لم يتم العثور على عناصر',
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Trading & Money Difference
     'trade.makeOffer': 'تقديم عرض',
     'trade.moneyDifference': 'فرق المال',
@@ -264,11 +190,7 @@ const translations = {
     'trade.rejectOffer': 'رفض العرض',
     'trade.counterOffer': 'عرض مضاد',
     'trade.negotiate': 'تفاوض',
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 6b4ebf695d15464c4e1cdd6c4f7f175b7a56f4c5
     // Common
     'common.loading': 'جاري التحميل...',
     'common.error': 'حدث خطأ ما',
