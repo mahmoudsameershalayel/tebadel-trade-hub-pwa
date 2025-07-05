@@ -1,11 +1,13 @@
-
 import { UserProfileDto, UpdateProfileDto } from '@/types/profile';
+import { API_BASE } from '../config/api-config.js';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://your-api-url.com';
 
 export class ProfileService {
   private static getAuthHeaders() {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found');
+    }
     return {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -13,45 +15,46 @@ export class ProfileService {
   }
 
   static async getProfile(): Promise<UserProfileDto> {
-    const response = await fetch(`${API_BASE_URL}/api/account/me`, {
+    const response = await fetch(`${API_BASE}/Account/Me`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch profile');
+    const json = await response.json();
+    if (!response.ok || json.result?.code !== 200) {
+      throw new Error(json.result?.message || 'Failed to fetch profile');
     }
-
-    return response.json();
+    return json.data;
   }
 
   static async updateProfile(data: UpdateProfileDto): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/account`, {
+    const response = await fetch(`${API_BASE}/Account/Profile`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to update profile');
+    const json = await response.json();
+    if (!response.ok || json.result?.code !== 200) {
+      throw new Error(json.result?.message || 'Failed to update profile');
     }
   }
 
-  static async uploadProfileImage(file: File): Promise<void> {
+    static async uploadProfileImage(file: File): Promise<void> {
     const formData = new FormData();
     formData.append('image', file);
 
-    const token = localStorage.getItem('authToken');
-    const response = await fetch(`${API_BASE_URL}/api/account`, {
-      method: 'PUT',
+    const token = localStorage.getItem('token');
+  
+
+    const response = await fetch(`${API_BASE}/account/UploadProfileImage`, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
       body: formData,
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload profile image');
+    const json = await response.json();
+    if (!response.ok || json.result?.code !== 200) {
+      throw new Error(json.result?.message || 'Failed to upload profile image');
     }
   }
 }

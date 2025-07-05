@@ -125,25 +125,7 @@ const ProfilePage: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: t('common.error'),
-        description: 'Please select a valid image file',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: t('common.error'),
-        description: 'Image size must be less than 5MB',
-        variant: 'destructive',
-      });
-      return;
-    }
+   
 
     try {
       setImageUploading(true);
@@ -249,57 +231,7 @@ const ProfilePage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Read-only Info */}
-                <div className="mt-8 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Username
-                    </label>
-                    <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-800">
-                      {profile.username}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-800">
-                      {profile.email}
-                    </div>
-                  </div>
-
-                  {profile.myPoints !== undefined && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Points
-                      </label>
-                      <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-800 font-semibold">
-                        {profile.myPoints}
-                      </div>
-                    </div>
-                  )}
-
-                  {profile.referralCode && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Referral Code
-                      </label>
-                      <div className="flex items-center">
-                        <div className="flex-1 px-3 py-2 bg-gray-50 rounded-md text-gray-800 font-mono">
-                          {showReferralCode ? profile.referralCode : '••••••••'}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowReferralCode(!showReferralCode)}
-                          className="ml-2 p-2 text-gray-500 hover:text-gray-700"
-                        >
-                          {showReferralCode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+               
               </div>
 
               {/* Editable Form Section */}

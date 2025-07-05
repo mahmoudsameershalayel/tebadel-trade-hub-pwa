@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { login as loginService, register as registerService } from '@/services/auth-service';
+import { ProfileService } from '@/services/profile-service';
 
 interface User {
   id: string;
@@ -96,14 +97,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const apiResponse = await loginService({ phone, password });
       const { accessToken } = apiResponse.data;
-      const user = { 
-        id: '1', 
-        phone, 
-        firstName: 'John', 
-        lastName: 'Doe', 
-        role: 'user' as const, 
-        subscriptionPlan: 'free' as const 
+      
+      // Store token first so ProfileService can use it
+      localStorage.setItem('token', accessToken);
+      
+      const profileData = await ProfileService.getProfile();
+      
+      // Map UserProfileDto to User interface
+      const nameParts = profileData.fullName ? profileData.fullName.trim().split(' ') : [];
+      const user: User = {
+        id: profileData.id,
+        phone: profileData.phoneNumber,
+        firstName: nameParts[0] || profileData.username || 'User',
+        lastName: nameParts.slice(1).join(' ') || '',
+        role: profileData.userType === 'admin' ? 'admin' : 'user',
+        subscriptionPlan: 'free',
+        avatar: profileData.imageURL,
       };
+      
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
@@ -115,15 +126,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'LOGIN_START' });
     try {
       await registerService(payload);
-      const user = { 
-        id: '1', 
+      
+      // After successful registration, login to get a real token
+      const loginResponse = await loginService({ 
         phone: payload.phone, 
-        firstName: payload.firstName, 
-        lastName: payload.lastName, 
-        role: 'user' as const, 
-        subscriptionPlan: 'free' as const 
+        password: payload.password 
+      });
+      
+      const { accessToken } = loginResponse.data;
+      
+      // Store token first so ProfileService can use it
+      localStorage.setItem('token', accessToken);
+      
+      const profileData = await ProfileService.getProfile();
+      
+      // Map UserProfileDto to User interface
+      const nameParts = profileData.fullName ? profileData.fullName.trim().split(' ') : [];
+      const user: User = {
+        id: profileData.id,
+        phone: profileData.phoneNumber,
+        firstName: nameParts[0] || profileData.username || payload.firstName,
+        lastName: nameParts.slice(1).join(' ') || payload.lastName,
+        role: profileData.userType === 'admin' ? 'admin' : 'user',
+        subscriptionPlan: 'free',
+        avatar: profileData.imageURL,
       };
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: 'mock-token' } });
+      
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
       throw error;
@@ -140,15 +169,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (state.token && !state.user) {
-      const mockUser: User = {
-        id: '1',
-        phone: '1234567890',
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'user',
-        subscriptionPlan: 'free',
-      };
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: state.token } });
+      // Try to get the user profile with the stored token
+      ProfileService.getProfile()
+        .then((profileData) => {
+          const nameParts = profileData.fullName ? profileData.fullName.trim().split(' ') : [];
+          const user: User = {
+            id: profileData.id,
+            phone: profileData.phoneNumber,
+            firstName: nameParts[0] || profileData.username || 'User',
+            lastName: nameParts.slice(1).join(' ') || '',
+            role: profileData.userType === 'admin' ? 'admin' : 'user',
+            subscriptionPlan: 'free',
+            avatar: profileData.imageURL,
+          };
+          dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: state.token! } });
+        })
+        .catch((error) => {
+          console.error('Failed to restore user session:', error);
+          // If the token is invalid, clear it
+          dispatch({ type: 'LOGOUT' });
+        });
     }
   }, [state.token, state.user]);
 
