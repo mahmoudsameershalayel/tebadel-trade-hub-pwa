@@ -10,6 +10,7 @@ import Header from "@/components/Layout/Header";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import PostItem from "@/pages/PostItem";
 import MyItems from "@/pages/MyItems";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/NotFound";
@@ -80,6 +81,7 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/post-item" element={<PostItem />} />
                   <Route path="/my-items" element={<MyItems />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="*" element={<NotFound />} />

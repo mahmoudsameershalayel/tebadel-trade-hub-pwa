@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
+import { Upload } from 'lucide-react';
+import ItemImageModal from './ItemImageModal';
 
 interface ItemListProps {
   onEdit?: (item: ItemDto) => void;
@@ -19,6 +21,8 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
   const [items, setItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
 
   useEffect(() => {
     loadItems();
@@ -61,6 +65,17 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
     }
   };
 
+  const handleUploadImage = (item: ItemDto) => {
+    setSelectedItem(item);
+    setImageModalOpen(true);
+  };
+
+  const handleImageUpdated = (updatedItem: ItemDto) => {
+    setItems(items.map(item => 
+      item.id === updatedItem.id ? updatedItem : item
+    ));
+  };
+
   const getStatusColor = (status: ItemDto['status']) => {
     switch (status) {
       case 'متاح':
@@ -94,85 +109,112 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-        <h2 className="text-2xl font-bold">My Items</h2>
-        <Badge variant="secondary">{items.length} items</Badge>
+    <>
+      <div className="space-y-6">
+        <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+          <h2 className="text-2xl font-bold">My Items</h2>
+          <Badge variant="secondary">{items.length} items</Badge>
+        </div>
+
+        {items.length === 0 ? (
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center text-muted-foreground">
+                <p>No items found</p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.map((item) => (
+              <Card key={item.id} className="cursor-pointer hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <CardTitle className={`text-lg truncate ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {item.title}
+                    </CardTitle>
+                    <Badge className={getStatusColor(item.status)}>
+                      {item.status}
+                    </Badge>
+                  </div>
+                  <p className={`text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {item.category.name}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {item.imageURL ? (
+                    <div className="w-full h-32 mb-4 bg-gray-100 rounded-md overflow-hidden">
+                      <img 
+                        src={item.imageURL} 
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-32 mb-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center">
+                      <div className="text-center text-gray-400">
+                        <Upload className="h-8 w-8 mx-auto mb-2" />
+                        <p className="text-sm">No image</p>
+                      </div>
+                    </div>
+                  )}
+                  {item.description && (
+                    <p className={`text-sm text-muted-foreground mb-4 line-clamp-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {item.description}
+                    </p>
+                  )}
+                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => onView?.(item)}
+                      className="flex-1"
+                    >
+                      View
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleUploadImage(item)}
+                      className="flex-1"
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      Image
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => onEdit?.(item)}
+                      className="flex-1"
+                    >
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deletingId === item.id}
+                      className="flex-1"
+                    >
+                      {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
-      {items.length === 0 ? (
-        <Card>
-          <CardContent className="py-12">
-            <div className="text-center text-muted-foreground">
-              <p>No items found</p>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <Card key={item.id} className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <CardTitle className={`text-lg truncate ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {item.title}
-                  </CardTitle>
-                  <Badge className={getStatusColor(item.status)}>
-                    {item.status}
-                  </Badge>
-                </div>
-                <p className={`text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
-                  {item.category.name}
-                </p>
-              </CardHeader>
-              <CardContent>
-                {item.imageURL && (
-                  <div className="w-full h-32 mb-4 bg-gray-100 rounded-md overflow-hidden">
-                    <img 
-                      src={item.imageURL} 
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                {item.description && (
-                  <p className={`text-sm text-muted-foreground mb-4 line-clamp-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {item.description}
-                  </p>
-                )}
-                <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => onView?.(item)}
-                    className="flex-1"
-                  >
-                    View
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => onEdit?.(item)}
-                    className="flex-1"
-                  >
-                    Edit
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={() => handleDelete(item.id)}
-                    disabled={deletingId === item.id}
-                    className="flex-1"
-                  >
-                    {deletingId === item.id ? 'Deleting...' : 'Delete'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      {selectedItem && (
+        <ItemImageModal
+          isOpen={imageModalOpen}
+          onClose={() => setImageModalOpen(false)}
+          item={selectedItem}
+          onImageUpdated={handleImageUpdated}
+        />
       )}
-    </div>
+    </>
   );
 };
 
