@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface LanguageContextType {
@@ -49,6 +48,9 @@ const translations = {
     'landing.heroSubtitle': 'The modern barter platform: trade what you don not need for what you want — with the option to add or receive a money difference.',
     'landing.getStarted': 'Get Started Free',
     'landing.signIn': 'Sign In',
+    'landing.message': 'With Tebadel, money is optional — only when you need it.',
+
+    // Features
     'landing.featuresTitle': 'Why Choose Tebadel?',
     'landing.featuresSubtitle': 'Experience the easiest and safest way to trade items — with optional cash difference when needed.',
     'landing.feature1.title': 'Trade Anything',
@@ -59,13 +61,65 @@ const translations = {
     'landing.feature3.description': 'Protected transactions with built-in dispute resolution and support.',
     'landing.feature4.title': 'Instant Matching',
     'landing.feature4.description': 'Smart algorithm matches you with traders who want what you have.',
+
+    // Services
+    'landing.servicesTitle': 'Our Services',
+    'landing.servicesSubtitle': 'Comprehensive trading solutions tailored for the modern Arabic marketplace',
+    'landing.services.direct.title': 'Direct Item Exchange',
+    'landing.services.direct.description': 'Trade items directly without any money involved. Perfect for equal value exchanges.',
+    'landing.services.money.title': 'Money Difference Trading',
+    'landing.services.money.description': 'Add or receive money to balance the trade when items have different values.',
+    'landing.services.secure.title': 'Secure Transactions',
+    'landing.services.secure.description': 'All trades are protected with our secure escrow system and dispute resolution.',
+    'landing.services.community.title': 'Community Verification',
+    'landing.services.community.description': 'User verification system ensures safe trading with trusted community members.',
+
+    // Stats
     'landing.stats.traders': 'Active Traders',
     'landing.stats.items': 'Items Traded',
     'landing.stats.success': 'Success Rate',
+
+    // Testimonials
+    'landing.testimonialsTitle': 'What Our Users Say',
+    'landing.testimonialsSubtitle': 'Real experiences from our trading community',
+    'landing.testimonials.user1.name': 'Ahmed Al-Rashid',
+    'landing.testimonials.user1.text': 'Tebadel made it so easy to trade my old laptop for a bicycle. The money difference feature was perfect!',
+    'landing.testimonials.user2.name': 'Fatima Hassan',
+    'landing.testimonials.user2.text': 'I love how safe and secure the platform is. Trading has never been this convenient.',
+    'landing.testimonials.user3.name': 'Omar Mahmoud',
+    'landing.testimonials.user3.text': 'The community is amazing and the customer support is excellent. Highly recommended!',
+
+    // FAQ
+    'landing.faqTitle': 'Frequently Asked Questions',
+    'landing.faqSubtitle': 'Everything you need to know about trading on Tebadel',
+    'landing.faq.q1.question': 'How does the money difference feature work?',
+    'landing.faq.q1.answer': 'When trading items of different values, you can add or receive money to balance the trade. This makes fair exchanges possible for any items.',
+    'landing.faq.q2.question': 'Is my personal information safe?',
+    'landing.faq.q2.answer': 'Yes, we use advanced encryption and security measures to protect all user data. Your privacy is our top priority.',
+    'landing.faq.q3.question': 'What if I have a dispute with another trader?',
+    'landing.faq.q3.answer': 'We have a comprehensive dispute resolution system with dedicated support staff to help resolve any issues fairly.',
+    'landing.faq.q4.question': 'Are there any fees for using Tebadel?',
+    'landing.faq.q4.answer': 'Basic trading is free! We only charge a small fee for premium features and secure payment processing.',
+
+    // Contact
+    'landing.contactTitle': 'Get in Touch',
+    'landing.contactSubtitle': 'We\'re here to help you with any questions or support you need',
+    'landing.contact.phone': 'Phone Support',
+    'landing.contact.email': 'Email Support',
+    'landing.contact.support': 'Customer Support',
+    'landing.contact.supportHours': '24/7 Available',
+    'landing.contact.form.name': 'Full Name',
+    'landing.contact.form.namePlaceholder': 'Enter your full name',
+    'landing.contact.form.email': 'Email Address',
+    'landing.contact.form.emailPlaceholder': 'Enter your email address',
+    'landing.contact.form.message': 'Message',
+    'landing.contact.form.messagePlaceholder': 'Tell us how we can help you...',
+    'landing.contact.form.send': 'Send Message',
+
+    // CTA
     'landing.ctaTitle': 'Ready to Start Trading?',
     'landing.ctaSubtitle': 'Join our community today and discover the joy of sustainable trading.',
     'landing.ctaButton': 'Create Your Account',
-    'landing.message': 'With Tabaadl, money is optional — only when you need it.',
 
     // Items
     'items.title': 'Available Items',
@@ -146,6 +200,9 @@ const translations = {
     'landing.heroSubtitle': 'منصة المقايضة الحديثة: بدّل ما لا تحتاجه، واحصل على ما تحب — مع إمكانية دفع أو استلام فرق نقدي.',
     'landing.getStarted': 'ابدأ مجاناً',
     'landing.signIn': 'تسجيل الدخول',
+    'landing.message': 'في تبادل، لا حاجة للمال دائمًا — فقط عندما تحتاجه.',
+
+    // Features
     'landing.featuresTitle': 'لماذا تختار تبادل؟',
     'landing.featuresSubtitle': 'اختبر أسهل وأأمن طريقة لتبادل الأشياء مع إمكانية دفع أو استلام فرق نقدي حسب الاتفاق.',
     'landing.feature1.title': 'تبادل أي شيء',
@@ -156,13 +213,65 @@ const translations = {
     'landing.feature3.description': 'معاملات محمية مع حل النزاعات المدمج والدعم.',
     'landing.feature4.title': 'مطابقة فورية',
     'landing.feature4.description': 'خوارزمية ذكية تربطك بالتجار الذين يريدون ما لديك.',
+
+    // Services
+    'landing.servicesTitle': 'خدماتنا',
+    'landing.servicesSubtitle': 'حلول تداول شاملة مصممة للسوق العربي الحديث',
+    'landing.services.direct.title': 'تبادل مباشر للأشياء',
+    'landing.services.direct.description': 'تبادل الأشياء مباشرة بدون تدخل المال. مثالي للتبادلات متساوية القيمة.',
+    'landing.services.money.title': 'تداول بفرق مالي',
+    'landing.services.money.description': 'أضف أو استلم مال لموازنة التبادل عندما تكون الأشياء بقيم مختلفة.',
+    'landing.services.secure.title': 'معاملات آمنة',
+    'landing.services.secure.description': 'جميع التبادلات محمية بنظام الضمان الآمن وحل النزاعات.',
+    'landing.services.community.title': 'تحقق المجتمع',
+    'landing.services.community.description': 'نظام تحقق المستخدمين يضمن التداول الآمن مع أعضاء مجتمع موثوقين.',
+
+    // Stats
     'landing.stats.traders': 'تاجر نشط',
     'landing.stats.items': 'عنصر متبادل',
     'landing.stats.success': 'معدل النجاح',
+
+    // Testimonials
+    'landing.testimonialsTitle': 'ماذا يقول مستخدمونا',
+    'landing.testimonialsSubtitle': 'تجارب حقيقية من مجتمع التداول لدينا',
+    'landing.testimonials.user1.name': 'أحمد الراشد',
+    'landing.testimonials.user1.text': 'تبادل جعل الأمر سهلاً جداً لتبديل لابتوبي القديم بدراجة هوائية. خاصية الفرق المالي كانت مثالية!',
+    'landing.testimonials.user2.name': 'فاطمة حسن',
+    'landing.testimonials.user2.text': 'أحب مدى أمان وحماية المنصة. التداول لم يكن بهذه السهولة من قبل.',
+    'landing.testimonials.user3.name': 'عمر محمود',
+    'landing.testimonials.user3.text': 'المجتمع رائع ودعم العملاء ممتاز. أنصح به بشدة!',
+
+    // FAQ
+    'landing.faqTitle': 'الأسئلة الشائعة',
+    'landing.faqSubtitle': 'كل ما تحتاج معرفته عن التداول في تبادل',
+    'landing.faq.q1.question': 'كيف تعمل خاصية الفرق المالي؟',
+    'landing.faq.q1.answer': 'عند تبادل أشياء بقيم مختلفة، يمكنك إضافة أو استلام مال لموازنة التبادل. هذا يجعل التبادل العادل ممكناً لأي أشياء.',
+    'landing.faq.q2.question': 'هل معلوماتي الشخصية آمنة؟',
+    'landing.faq.q2.answer': 'نعم، نستخدم تشفير متقدم وإجراءات أمنية لحماية جميع بيانات المستخدمين. خصوصيتك هي أولويتنا القصوى.',
+    'landing.faq.q3.question': 'ماذا لو كان لدي نزاع مع تاجر آخر؟',
+    'landing.faq.q3.answer': 'لدينا نظام شامل لحل النزاعات مع فريق دعم مخصص لمساعدة حل أي مشاكل بعدالة.',
+    'landing.faq.q4.question': 'هل هناك رسوم لاستخدام تبادل؟',
+    'landing.faq.q4.answer': 'التداول الأساسي مجاني! نحن نتقاضى رسوم صغيرة فقط للميزات المتميزة ومعالجة الدفع الآمن.',
+
+    // Contact
+    'landing.contactTitle': 'تواصل معنا',
+    'landing.contactSubtitle': 'نحن هنا لمساعدتك في أي أسئلة أو دعم تحتاجه',
+    'landing.contact.phone': 'الدعم الهاتفي',
+    'landing.contact.email': 'الدعم بالبريد الإلكتروني',
+    'landing.contact.support': 'دعم العملاء',
+    'landing.contact.supportHours': 'متاح ٢٤/٧',
+    'landing.contact.form.name': 'الاسم الكامل',
+    'landing.contact.form.namePlaceholder': 'ادخل اسمك الكامل',
+    'landing.contact.form.email': 'البريد الإلكتروني',
+    'landing.contact.form.emailPlaceholder': 'ادخل بريدك الإلكتروني',
+    'landing.contact.form.message': 'الرسالة',
+    'landing.contact.form.messagePlaceholder': 'أخبرنا كيف يمكننا مساعدتك...',
+    'landing.contact.form.send': 'إرسال الرسالة',
+
+    // CTA
     'landing.ctaTitle': 'مستعد لبدء التداول؟',
     'landing.ctaSubtitle': 'انضم إلى مجتمعنا اليوم واكتشف متعة التداول المستدام.',
     'landing.ctaButton': 'أنشئ حسابك',
-    'landing.message': 'في تبادل، لا حاجة للمال دائمًا — فقط عندما تحتاجه.',
 
     // Items
     'items.title': 'العناصر المتاحة',
@@ -218,7 +327,7 @@ export const useLanguage = () => {
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<'en' | 'ar'>(() => {
     const saved = localStorage.getItem('language');
-    return (saved as 'en' | 'ar') || 'ar'; // Changed default to Arabic
+    return (saved as 'en' | 'ar') || 'ar';
   });
 
   const setLanguage = (lang: 'en' | 'ar') => {
