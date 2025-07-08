@@ -1,6 +1,7 @@
 export interface CategoryDto {
   id: number;
-  name: string;
+  nameAR: string;
+  nameEN: string;
 }
 
 

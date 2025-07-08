@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ItemDto } from '@/types/item';
@@ -10,6 +9,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { Upload } from 'lucide-react';
 import ItemImageModal from './ItemImageModal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface ItemListProps {
   onEdit?: (item: ItemDto) => void;
@@ -23,6 +29,8 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<ItemDto | null>(null);
 
   useEffect(() => {
     loadItems();
@@ -30,7 +38,7 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
 
   const loadItems = async () => {
     try {
-      const itemsData = await ItemService.getAllItems();
+      const itemsData = await ItemService.getMyAllItems();
       setItems(itemsData);
     } catch (error) {
       toast({
@@ -43,13 +51,17 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this item?')) return;
-    
-    setDeletingId(id);
+  const handleDelete = (item: ItemDto) => {
+    setItemToDelete(item);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+    setDeletingId(itemToDelete.id);
     try {
-      await ItemService.deleteItem(id);
-      setItems(items.filter(item => item.id !== id));
+      await ItemService.deleteItem(itemToDelete.id);
+      setItems(items.filter(item => item.id !== itemToDelete.id));
       toast({
         title: t('success'),
         description: 'Item deleted successfully',
@@ -62,7 +74,14 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
       });
     } finally {
       setDeletingId(null);
+      setDeleteDialogOpen(false);
+      setItemToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setItemToDelete(null);
   };
 
   const handleUploadImage = (item: ItemDto) => {
@@ -70,22 +89,33 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
     setImageModalOpen(true);
   };
 
-  const handleImageUpdated = (updatedItem: ItemDto) => {
-    setItems(items.map(item => 
-      item.id === updatedItem.id ? updatedItem : item
-    ));
+  const handleImageUpdated = () => {
+    loadItems();
   };
 
   const getStatusColor = (status: ItemDto['status']) => {
     switch (status) {
-      case 'متاح':
+      case 'Avaliable':
         return 'bg-green-100 text-green-800';
-      case 'قيد_التبديل':
+      case 'Pending':
         return 'bg-yellow-100 text-yellow-800';
-      case 'تم_التبديل':
+      case 'Exchanged':
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: ItemDto['status']) => {
+    switch (status) {
+      case 'Available':
+        return t('items.status.available') || 'Available';
+      case 'Pending':
+        return t('items.status.inExchange') || 'In Exchange';
+      case 'Exchanged':
+        return t('items.status.exchanged') || 'Exchanged';
+      default:
+        return status;
     }
   };
 
@@ -110,17 +140,41 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
 
   return (
     <>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-center">{t('common.delete')}</DialogTitle>
+            <DialogDescription className="text-center">
+              {t('myItems.deleteConfirm') || 'Are you sure you want to delete this item?'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center gap-2 mt-4">
+          <Button variant="outline" onClick={cancelDelete}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deletingId === (itemToDelete && itemToDelete.id)}
+            >
+              {deletingId === (itemToDelete && itemToDelete.id)
+                ? t('common.loading')
+                : t('common.delete')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="space-y-6">
         <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-          <h2 className="text-2xl font-bold">My Items</h2>
-          <Badge variant="secondary">{items.length} items</Badge>
+          <Badge variant="secondary">{items.length} {t('items.myItems')}</Badge>
+          <h2 className={`text-2xl font-bold ${isRTL ? 'text-right' : 'text-left'}`}>{t('myItems.yourItems')}</h2>
         </div>
 
         {items.length === 0 ? (
           <Card>
             <CardContent className="py-12">
-              <div className="text-center text-muted-foreground">
-                <p>No items found</p>
+              <div className={`text-center text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                <p>{t('items.noItems')}</p>
               </div>
             </CardContent>
           </Card>
@@ -134,18 +188,26 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
                       {item.title}
                     </CardTitle>
                     <Badge className={getStatusColor(item.status)}>
-                      {item.status}
+                      {getStatusText(item.status)}
                     </Badge>
                   </div>
                   <p className={`text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {item.category.name}
+                    {isRTL ? item.category.nameAR : item.category.nameEN}
                   </p>
                 </CardHeader>
                 <CardContent>
-                  {item.imageURL ? (
+                  {(item.itemImages && item.itemImages.length > 0) ? (
                     <div className="w-full h-32 mb-4 bg-gray-100 rounded-md overflow-hidden">
-                      <img 
-                        src={item.imageURL} 
+                      <img
+                        src={item.itemImages[0].imageURL}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : item.imageURL ? (
+                    <div className="w-full h-32 mb-4 bg-gray-100 rounded-md overflow-hidden">
+                      <img
+                        src={item.imageURL}
                         alt={item.title}
                         className="w-full h-full object-cover"
                       />
@@ -164,39 +226,39 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
                     </p>
                   )}
                   <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => onView?.(item)}
                       className="flex-1"
                     >
-                      View
+                      {t('common.view')}
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleUploadImage(item)}
                       className="flex-1"
                     >
                       <Upload className="h-4 w-4 mr-1" />
-                      Image
+                      {t('items.image')}
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => onEdit?.(item)}
                       className="flex-1"
                     >
-                      Edit
+                      {t('common.edit')}
                     </Button>
-                    <Button 
-                      variant="destructive" 
-                      size="sm" 
-                      onClick={() => handleDelete(item.id)}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(item)}
                       disabled={deletingId === item.id}
                       className="flex-1"
                     >
-                      {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                      {deletingId === item.id ? t('common.loading') : t('common.delete')}
                     </Button>
                   </div>
                 </CardContent>

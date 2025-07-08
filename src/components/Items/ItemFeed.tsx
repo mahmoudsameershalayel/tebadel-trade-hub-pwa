@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ItemCard from './ItemCard';
 import { Link } from 'react-router-dom';
+import { ItemService } from '@/services/item-service';
+import { ItemDto } from '@/types/item';
 
 interface Item {
   id: string;
@@ -29,74 +30,37 @@ interface Item {
   preferredCategories: string[];
 }
 
-const categories = [
-  'Electronics',
-  'Books',
-  'Clothing',
-  'Sports',
-  'Home & Garden',
-  'Toys',
-  'Automotive',
-  'Health & Beauty',
-  'Art & Crafts',
-  'Music',
-];
-
-// Mock data
-const mockItems: Item[] = [
-  {
-    id: '1',
-    title: 'MacBook Pro 13" 2020',
-    description: 'Excellent condition MacBook Pro with M1 chip. Perfect for students or professionals.',
-    images: ['https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500'],
-    category: 'Electronics',
-    location: 'New York, NY',
-    userId: '2',
-    userName: 'Sarah Johnson',
-    createdAt: '2024-01-15T10:00:00Z',
-    condition: 'like-new',
-    preferredCategories: ['Books', 'Sports'],
-  },
-  {
-    id: '2',
-    title: 'Vintage Camera Collection',
-    description: 'Beautiful collection of vintage film cameras from the 1960s-80s.',
-    images: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=500'],
-    category: 'Electronics',
-    location: 'Los Angeles, CA',
-    userId: '3',
-    userName: 'Mike Chen',
-    createdAt: '2024-01-14T15:30:00Z',
-    condition: 'good',
-    preferredCategories: ['Art & Crafts', 'Books'],
-  },
-  {
-    id: '3',
-    title: 'Programming Books Bundle',
-    description: 'Complete set of programming books including React, Node.js, and Python guides.',
-    images: ['https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500'],
-    category: 'Books',
-    location: 'Chicago, IL',
-    userId: '4',
-    userName: 'Alex Rodriguez',
-    createdAt: '2024-01-13T08:45:00Z',
-    condition: 'good',
-    preferredCategories: ['Electronics'],
-  },
-];
-
 const ItemFeed = () => {
-  const [items, setItems] = useState<Item[]>(mockItems);
+  const [items, setItems] = useState<ItemDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [favorites, setFavorites] = useState<string[]>([]);
   const { t } = useLanguage();
   const { state } = useAuth();
 
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const data = await ItemService.getAllItems();
+        setItems(data);
+      } catch (err) {
+        setError(t('items.loadError'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadItems();
+  }, [t]);
+
+  // Collect unique categories from items
+  const categories = Array.from(new Set(items.map(item => item.category?.nameEN || ''))).filter(Boolean);
+
   const filteredItems = items.filter((item) => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+                         (item.description?.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = selectedCategory === 'all' || (item.category && item.category.nameEN === selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -122,7 +86,8 @@ const ItemFeed = () => {
             {t('items.title')}
           </h1>
           <p className="text-gray-600">
-            Discover amazing items to trade in your community
+          {t('items.subTitle')}
+            
           </p>
         </div>
         
@@ -176,12 +141,21 @@ const ItemFeed = () => {
             item={item}
             onTradeClick={handleTradeClick}
             onFavoriteClick={handleFavoriteClick}
-            isFavorited={favorites.includes(item.id)}
           />
         ))}
       </div>
 
-      {filteredItems.length === 0 && (
+      {isLoading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">{t('common.loading')}</p>
+        </div>
+      )}
+      {error && (
+        <div className="text-center py-12">
+          <p className="text-red-500 text-lg">{error}</p>
+        </div>
+      )}
+      {!isLoading && !error && filteredItems.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">{t('items.noItems')}</p>
         </div>

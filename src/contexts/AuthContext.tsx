@@ -30,7 +30,7 @@ type AuthAction =
 const initialState: AuthState = {
   user: null,
   token: localStorage.getItem('token'),
-  isLoading: false,
+  isLoading: !!localStorage.getItem('token'), // Set loading to true if token exists
   isAuthenticated: false,
 };
 
@@ -189,8 +189,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // If the token is invalid, clear it
           dispatch({ type: 'LOGOUT' });
         });
+    } else if (!state.token) {
+      // If no token, ensure loading is false
+      if (state.isLoading) {
+        dispatch({ type: 'LOGIN_FAILURE' });
+      }
     }
-  }, [state.token, state.user]);
+  }, [state.token, state.user, state.isLoading]);
 
   return (
     <AuthContext.Provider value={{ state, login, register, logout, updateUser }}>

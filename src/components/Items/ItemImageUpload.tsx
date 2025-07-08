@@ -1,9 +1,9 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Upload, X, Image } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ItemImageUploadProps {
   itemId: number;
@@ -19,6 +19,7 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, isRTL } = useLanguage();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -27,8 +28,8 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
     // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: 'Error',
-        description: 'Please select an image file',
+        title: t('common.error'),
+        description: t('itemImage.selectImageError'),
         variant: 'destructive',
       });
       return;
@@ -37,8 +38,8 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: 'Error',
-        description: 'Image size must be less than 5MB',
+        title: t('common.error'),
+        description: t('itemImage.sizeError'),
         variant: 'destructive',
       });
       return;
@@ -52,10 +53,10 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
 
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('Authentication token not found');
+        throw new Error(t('itemImage.authError'));
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE || 'https://tabadal20250701211825.azurewebsites.net/TabadalAPI'}/items/${itemId}/image`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE || 'https://tabadal20250701211825.azurewebsites.net/TabadalAPI/Customer'}/items/${itemId}/image`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -74,13 +75,13 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
       onImageUploaded?.(imageUrl);
 
       toast({
-        title: 'Success',
-        description: 'Image uploaded successfully',
+        title: t('common.success') || 'Success',
+        description: t('itemImage.uploadSuccess'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to upload image',
+        title: t('common.error'),
+        description: error instanceof Error ? error.message : t('itemImage.uploadError'),
         variant: 'destructive',
       });
     } finally {
@@ -96,7 +97,7 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('Authentication token not found');
+        throw new Error(t('itemImage.authError'));
       }
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE || 'https://tabadal20250701211825.azurewebsites.net/TabadalAPI'}/items/${itemId}/image`, {
@@ -117,13 +118,13 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
       onImageUploaded?.('');
 
       toast({
-        title: 'Success',
-        description: 'Image removed successfully',
+        title: t('common.success') || 'Success',
+        description: t('itemImage.removeSuccess'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to remove image',
+        title: t('common.error'),
+        description: error instanceof Error ? error.message : t('itemImage.removeError'),
         variant: 'destructive',
       });
     } finally {
@@ -135,7 +136,7 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
     <Card>
       <CardContent className="p-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Item Image</h3>
+          <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{t('itemImage.heading')}</h3>
           
           {previewUrl ? (
             <div className="relative">
@@ -160,7 +161,7 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
             <div className="w-full h-64 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
               <div className="text-center">
                 <Image className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">No image uploaded</p>
+                <p className={`text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{t('itemImage.noImage')}</p>
               </div>
             </div>
           )}
@@ -172,7 +173,7 @@ const ItemImageUpload: React.FC<ItemImageUploadProps> = ({
               className="flex-1"
             >
               <Upload className="h-4 w-4 mr-2" />
-              {isUploading ? 'Uploading...' : (previewUrl ? 'Change Image' : 'Upload Image')}
+              {isUploading ? t('itemImage.uploading') : (previewUrl ? t('itemImage.change') : t('itemImage.upload'))}
             </Button>
           </div>
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ItemForCreateUpdateDto, ItemDto } from '@/types/item';
@@ -46,8 +45,8 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
       setCategories(categoriesData);
     } catch (error) {
       toast({
-        title: t('error'),
-        description: 'Failed to load categories',
+        title: t('common.error'),
+        description: t('items.loadCategoriesError'),
         variant: 'destructive',
       });
     } finally {
@@ -62,13 +61,13 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
         await ItemService.updateItem(item.id, data);
         toast({
           title: t('success'),
-          description: 'Item updated successfully',
+          description: t('items.updateSuccess'),
         });
       } else {
         await ItemService.createItem(data);
         toast({
           title: t('success'),
-          description: 'Item created successfully',
+          description: t('items.createSuccess'),
         });
       }
       onSuccess?.();
@@ -87,7 +86,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-          {item ? 'Edit Item' : 'Create New Item'}
+          {item ? t('items.editItem') : t('items.createNewItem')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -99,11 +98,11 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
               rules={{ required: 'Title is required' }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>Title</FormLabel>
+                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>{t('items.title')}</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
-                      placeholder="Enter item title"
+                      placeholder={t('items.titlePlaceholder')}
                       className={isRTL ? 'text-right' : 'text-left'}
                     />
                   </FormControl>
@@ -117,11 +116,11 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>Description</FormLabel>
+                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>{t('items.description')}</FormLabel>
                   <FormControl>
                     <Textarea 
                       {...field} 
-                      placeholder="Enter item description"
+                      placeholder={t('items.descriptionPlaceholder')}
                       className={`min-h-[100px] ${isRTL ? 'text-right' : 'text-left'}`}
                     />
                   </FormControl>
@@ -135,11 +134,11 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
               name="preferredExchangeNote"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>Preferred Exchange Note</FormLabel>
+                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>{t('items.preferredExchangeNote')}</FormLabel>
                   <FormControl>
                     <Textarea 
                       {...field} 
-                      placeholder="Enter your preferred exchange details"
+                      placeholder={t('items.preferredExchangeNotePlaceholder')}
                       className={`min-h-[80px] ${isRTL ? 'text-right' : 'text-left'}`}
                     />
                   </FormControl>
@@ -151,10 +150,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
             <FormField
               control={form.control}
               name="categoryId"
-              rules={{ required: 'Category is required' }}
+              rules={{ required: t('items.category') + ' ' + t('common.required') }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>Category</FormLabel>
+                  <FormLabel className={isRTL ? 'text-right' : 'text-left'}>{t('items.category')}</FormLabel>
                   <Select 
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value?.toString()}
@@ -162,13 +161,13 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
                   >
                     <FormControl>
                       <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder={t('items.categoryPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
+                          {isRTL? category.nameAR :category.nameEN }
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -180,11 +179,11 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onSuccess, onCancel }) => {
 
             <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
               <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? 'Saving...' : (item ? 'Update Item' : 'Create Item')}
+                {isLoading ? t('items.saving') : (item ? t('items.editItem') : t('items.createNewItem'))}
               </Button>
               {onCancel && (
                 <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               )}
             </div>

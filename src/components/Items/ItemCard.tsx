@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Heart, MapPin, Clock, ArrowUpDown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,9 +20,9 @@ interface Item {
 }
 
 interface ItemCardProps {
-  item: Item;
-  onTradeClick?: (item: Item) => void;
-  onFavoriteClick?: (item: Item) => void;
+  item: any; // Accepts ItemDto or compatible
+  onTradeClick?: (item: any) => void;
+  onFavoriteClick?: (item: any) => void;
   isFavorited?: boolean;
 }
 
@@ -48,12 +47,17 @@ const ItemCard: React.FC<ItemCardProps> = ({
     return date.toLocaleDateString();
   };
 
+  // Use first image from itemImages if available
+  const firstImage = item.itemImages && item.itemImages.length > 0
+    ? item.itemImages[0].imageURL
+    : (item.images && item.images[0]) || '/api/placeholder/300/300';
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
         <div className="aspect-square overflow-hidden rounded-t-lg">
           <img
-            src={item.images[0] || '/api/placeholder/300/300'}
+            src={firstImage}
             alt={item.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -103,21 +107,26 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
           <div className="flex items-center justify-between text-sm text-gray-600">
             <span>by {item.userName}</span>
-            <Badge variant="outline">{item.category}</Badge>
+            <Badge variant="outline">{typeof item.category === 'string'
+              ? item.category
+              : (item.category?.nameEN || item.category?.nameAR || item.category?.id)}
+            </Badge>
           </div>
 
-          {item.preferredCategories.length > 0 && (
+          {(item.preferredCategories || []).length > 0 && (
             <div className="space-y-2">
               <p className="text-xs text-gray-500">Looking for:</p>
               <div className="flex flex-wrap gap-1">
-                {item.preferredCategories.slice(0, 3).map((cat) => (
-                  <Badge key={cat} variant="secondary" className="text-xs">
-                    {cat}
+                {(item.preferredCategories || []).slice(0, 3).map((cat, idx) => (
+                  <Badge key={typeof cat === 'object' ? cat.id : cat} variant="secondary" className="text-xs">
+                    {typeof cat === 'string'
+                      ? cat
+                      : (cat.nameEN || cat.nameAR || cat.id)}
                   </Badge>
                 ))}
-                {item.preferredCategories.length > 3 && (
+                {(item.preferredCategories || []).length > 3 && (
                   <Badge variant="secondary" className="text-xs">
-                    +{item.preferredCategories.length - 3}
+                    +{typeof (item.preferredCategories || []).length === 'number' ? (item.preferredCategories || []).length - 3 : ''}
                   </Badge>
                 )}
               </div>
