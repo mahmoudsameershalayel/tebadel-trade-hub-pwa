@@ -12,6 +12,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import PostItem from "@/pages/PostItem";
 import MyItems from "@/pages/MyItems";
+import ExchangeRequests from "@/pages/ExchangeRequests";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/NotFound";
 import { useEffect } from "react";
@@ -83,6 +84,7 @@ const App = () => (
                   <Route path="/register" element={<Register />} />
                   <Route path="/post-item" element={<PostItem />} />
                   <Route path="/my-items" element={<MyItems />} />
+                  <Route path="/exchange-requests" element={<ExchangeRequests />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
