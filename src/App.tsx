@@ -14,7 +14,11 @@ import PostItem from "@/pages/PostItem";
 import MyItems from "@/pages/MyItems";
 import ExchangeRequests from "@/pages/ExchangeRequests";
 import ProfilePage from "@/pages/ProfilePage";
+import AddressListPage from "@/pages/AddressListPage";
+import AddressForm from "@/components/Address/AddressForm";
+import AddressEditPage from "@/pages/AddressEditPage";
 import NotFound from "@/pages/NotFound";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -82,11 +86,14 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
-                  <Route path="/post-item" element={<PostItem />} />
-                  <Route path="/my-items" element={<MyItems />} />
-                  <Route path="/exchange-requests" element={<ExchangeRequests />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/offers" element={<ExchangeRequests />} />
+                  <Route path="/post-item" element={<ProtectedRoute><PostItem /></ProtectedRoute>} />
+                  <Route path="/my-items" element={<ProtectedRoute><MyItems /></ProtectedRoute>} />
+                  <Route path="/exchange-requests" element={<ProtectedRoute><ExchangeRequests /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                  <Route path="/addresses" element={<ProtectedRoute><AddressListPage /></ProtectedRoute>} />
+                  <Route path="/addresses/new" element={<ProtectedRoute><AddressForm /></ProtectedRoute>} />
+                  <Route path="/addresses/edit/:id" element={<ProtectedRoute><AddressEditPage /></ProtectedRoute>} />
+                  <Route path="/offers" element={<ProtectedRoute><ExchangeRequests /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
