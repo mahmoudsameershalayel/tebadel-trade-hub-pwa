@@ -36,7 +36,7 @@ const ItemImageModal: React.FC<ItemImageModalProps> = ({
         <div className="space-y-4">
           <ItemImageUpload
             itemId={item.id}
-            currentImageUrl={item.imageURL}
+            currentImageUrl={item.itemImages?.[0]?.imageURL}
             onImageUploaded={handleImageUploaded}
           />
           <div className="flex justify-end">

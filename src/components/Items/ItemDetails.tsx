@@ -23,9 +23,7 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
   // Prepare images array for slider
   const images = item.itemImages && item.itemImages.length > 0
     ? item.itemImages
-    : item.imageURL
-      ? [{ imageURL: item.imageURL }]
-      : [];
+    : [];
 
   const handlePrev = () => {
     setFade(false);
