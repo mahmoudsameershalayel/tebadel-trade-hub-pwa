@@ -86,6 +86,7 @@ const App = () => (
                   <Route path="/my-items" element={<MyItems />} />
                   <Route path="/exchange-requests" element={<ExchangeRequests />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/offers" element={<ExchangeRequests />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

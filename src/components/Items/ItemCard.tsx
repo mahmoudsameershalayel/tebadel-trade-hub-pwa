@@ -106,16 +106,16 @@ const ItemCard: React.FC<ItemCardProps> = ({
           </div>
 
           <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>by {item.userName}</span>
+            <span>by {item.customer.fullName}</span>
             <Badge variant="outline">{typeof item.category === 'string'
               ? item.category
-              : (item.category?.nameEN || item.category?.nameAR || item.category?.id)}
+              : ( item.category?.nameAr || item.category?.nameAR || item.category?.id)}
             </Badge>
           </div>
 
           {(item.preferredCategories || []).length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs text-gray-500">Looking for:</p>
+              <p className="text-xs text-gray-500">{t('items.lookingFor')}</p>
               <div className="flex flex-wrap gap-1">
                 {(item.preferredCategories || []).slice(0, 3).map((cat, idx) => (
                   <Badge key={typeof cat === 'object' ? cat.id : cat} variant="secondary" className="text-xs">
@@ -139,7 +139,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
             size="sm"
           >
             <ArrowUpDown className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
-            Propose Trade
+            {t('trade.makeOffer')}
           </Button>
         </div>
       </CardContent>

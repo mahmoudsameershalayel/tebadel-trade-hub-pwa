@@ -35,6 +35,7 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
       case 'Pending': return 'bg-amber-100 text-amber-800 border-amber-200';
       case 'Accepted': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'Rejected': return 'bg-red-100 text-red-800 border-red-200';
+      case 'Cancelled': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -43,7 +44,7 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
     <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm hover:shadow-xl transition-shadow">
       <CardHeader className="pb-3">
         <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-          <CardTitle className="text-lg font-semibold text-primary">
+          <CardTitle className={`text-lg font-semibold text-primary ${isRTL ? 'text-right' : 'text-left'}`}>
             {type === 'sent' ? t('exchange.sentRequest') : t('exchange.receivedRequest')}
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -52,7 +53,7 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
             </Badge>
             <div className={`flex items-center text-sm text-muted-foreground ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
               <Calendar className="h-4 w-4 mr-1" />
-              {format(new Date(request.createdAt), 'MMM dd, yyyy')}
+              {format(new Date(request.createdAt), isRTL ? 'yyyy/MM/dd' : 'MMM dd, yyyy')}
             </div>
           </div>
         </div>
@@ -63,20 +64,20 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
         <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           {/* Offered Item */}
           <div className="flex-1 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4">
-            <div className="text-sm font-medium text-amber-800 mb-2">
+            <div className={`text-sm font-medium text-amber-800 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}> 
               {type === 'sent' ? t('exchange.yourItem') : t('exchange.theirItem')}
             </div>
-            <div className="flex items-center gap-3">
-              {request.offeredItem.imageURL && (
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+              {request.offeredItem.itemImages && request.offeredItem.itemImages.length > 0 && (
                 <img
-                  src={request.offeredItem.imageURL}
+                  src={request.offeredItem.itemImages[0].imageURL}
                   alt={request.offeredItem.title}
                   className="w-12 h-12 rounded-lg object-cover"
                 />
               )}
-              <div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <h4 className="font-medium text-gray-900">{request.offeredItem.title}</h4>
-                <p className="text-sm text-gray-600">{request.offeredItem.category.nameEN}</p>
+                <p className="text-sm text-gray-600">{isRTL ? request.offeredItem.category.nameAR : request.offeredItem.category.nameEN}</p>
               </div>
             </div>
           </div>
@@ -88,20 +89,20 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
 
           {/* Requested Item */}
           <div className="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4">
-            <div className="text-sm font-medium text-emerald-800 mb-2">
+            <div className={`text-sm font-medium text-emerald-800 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}> 
               {type === 'sent' ? t('exchange.theirItem') : t('exchange.yourItem')}
             </div>
-            <div className="flex items-center gap-3">
-              {request.requestedItem.imageURL && (
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+              {request.requestedItem.itemImages && request.requestedItem.itemImages.length > 0 && (
                 <img
-                  src={request.requestedItem.imageURL}
+                  src={request.requestedItem.itemImages[0].imageURL}
                   alt={request.requestedItem.title}
                   className="w-12 h-12 rounded-lg object-cover"
                 />
               )}
-              <div>
+              <div className={isRTL ? 'text-right' : 'text-left'}>
                 <h4 className="font-medium text-gray-900">{request.requestedItem.title}</h4>
-                <p className="text-sm text-gray-600">{request.requestedItem.category.nameEN}</p>
+                <p className="text-sm text-gray-600">{isRTL ? request.requestedItem.category.nameAR : request.requestedItem.category.nameEN}</p>
               </div>
             </div>
           </div>
@@ -109,18 +110,26 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
 
         {/* Money Difference */}
         {request.moneyDifference && request.moneyDifference > 0 && (
-          <div className={`flex items-center gap-2 bg-blue-50 rounded-lg p-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-            <DollarSign className="h-5 w-5 text-blue-600" />
-            <span className="text-blue-800 font-medium">
-              {t('exchange.moneyDifference')}: ${request.moneyDifference}
+          <div className={`flex items-center gap-2 rounded-lg p-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'} ${request.moneyDirection === 'Pay' ? 'bg-red-50' : 'bg-green-50'}`}>
+            <DollarSign className={`h-5 w-5 ${request.moneyDirection === 'Pay' ? 'text-red-600' : 'text-green-600'}`} />
+            <span className={`font-medium ${request.moneyDirection === 'Pay' ? 'text-red-700' : 'text-green-700'} ${isRTL ? 'text-right' : 'text-left'}`}>
+              {isRTL ? (
+                request.moneyDirection === 'Pay'
+                  ? `أريد دفع فرق المال: -$${request.moneyDifference}`
+                  : `أريد إستلام فرق المال: +$${request.moneyDifference}`
+              ) : (
+                <>
+                  {t('exchange.moneyDifference')}: {request.moneyDirection === 'Pay' ? '-' : '+'}${request.moneyDifference}
+                </>
+              )}
             </span>
           </div>
         )}
 
         {/* Users Info */}
         <div className={`flex items-center justify-between text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-          <span>{t('exchange.from')}: {request.fromUser.fullName}</span>
-          <span>{t('exchange.to')}: {request.toUser.fullName}</span>
+          <span className={isRTL ? 'text-right' : 'text-left'}>{t('exchange.from')}: {request.offeredByUser.fullName}</span>
+          <span className={isRTL ? 'text-right' : 'text-left'}>{t('exchange.to')}: {request.requestedToUser.fullName}</span>
         </div>
 
         {/* Action Buttons */}

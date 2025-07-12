@@ -15,6 +15,9 @@ import ItemCard from './ItemCard';
 import { Link } from 'react-router-dom';
 import { ItemService } from '@/services/item-service';
 import { ItemDto } from '@/types/item';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { ExchangeService } from '@/services/exchange-service';
+import { useToast } from '@/hooks/use-toast';
 
 interface Item {
   id: string;
@@ -39,6 +42,18 @@ const ItemFeed = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const { t } = useLanguage();
   const { state } = useAuth();
+  const isRTL = useLanguage().isRTL;
+  const { toast } = useToast();
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [selectedTradeItem, setSelectedTradeItem] = useState<ItemDto | null>(null);
+  const [myItems, setMyItems] = useState<ItemDto[]>([]);
+  const [selectedMyItemId, setSelectedMyItemId] = useState<string>('');
+  const [moneyDifference, setMoneyDifference] = useState('');
+  const [tradeLoading, setTradeLoading] = useState(false);
+  const [tradeError, setTradeError] = useState<string | null>(null);
+  const [tradeSuccess, setTradeSuccess] = useState<string | null>(null);
+  const [moneyDirection, setMoneyDirection] = useState<'Pay' | 'Receive'>('Pay');
+  const [tradeDescription, setTradeDescription] = useState('');
 
   useEffect(() => {
     const loadItems = async () => {
@@ -54,6 +69,12 @@ const ItemFeed = () => {
     loadItems();
   }, [t]);
 
+  useEffect(() => {
+    if (showTradeModal && state.isAuthenticated) {
+      ItemService.getMyAllItems().then(setMyItems).catch(() => setMyItems([]));
+    }
+  }, [showTradeModal, state.isAuthenticated]);
+
   // Collect unique categories from items
   const categories = Array.from(new Set(items.map(item => item.category?.nameEN || ''))).filter(Boolean);
 
@@ -64,9 +85,15 @@ const ItemFeed = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleTradeClick = (item: Item) => {
-    console.log('Propose trade for:', item);
-    // Navigate to trade proposal page
+  const handleTradeClick = (item: ItemDto) => {
+    setSelectedTradeItem(item);
+    setShowTradeModal(true);
+    setSelectedMyItemId('');
+    setMoneyDifference('');
+    setMoneyDirection('Pay');
+    setTradeDescription('');
+    setTradeError(null);
+    setTradeSuccess(null);
   };
 
   const handleFavoriteClick = (item: Item) => {
@@ -75,6 +102,39 @@ const ItemFeed = () => {
         ? prev.filter(id => id !== item.id)
         : [...prev, item.id]
     );
+  };
+
+  const handleSubmitTrade = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTradeLoading(true);
+    setTradeError(null);
+    setTradeSuccess(null);
+    try {
+      if (!selectedMyItemId || !moneyDirection || !tradeDescription) {
+        setTradeError(t('trade.fillAllFields'));
+        setTradeLoading(false);
+        return;
+      }
+      await ExchangeService.createExchangeRequest({
+          offeredItemId: Number(selectedMyItemId),
+          requestedItemId: Number(selectedTradeItem!.id),
+          moneyDifference: moneyDifference ? Number(moneyDifference) : undefined,
+          moneyDirection: moneyDirection === 'Pay' ? 1 : 2,
+          description: tradeDescription,
+      });
+      setTradeSuccess(t('trade.offerSent'));
+      setShowTradeModal(false);
+      toast({
+        title: t('trade.offerSent'),
+        description: t('trade.offerSent'),
+        variant: 'default',
+        duration: 1500,
+      });
+    } catch (err: any) {
+      setTradeError(err.message || t('common.error'));
+    } finally {
+      setTradeLoading(false);
+    }
   };
 
   return (
@@ -86,8 +146,7 @@ const ItemFeed = () => {
             {t('items.title')}
           </h1>
           <p className="text-gray-600">
-          {t('items.subTitle')}
-            
+            {t('items.subTitle')}
           </p>
         </div>
         
@@ -160,6 +219,78 @@ const ItemFeed = () => {
           <p className="text-gray-500 text-lg">{t('items.noItems')}</p>
         </div>
       )}
+
+      <Dialog open={showTradeModal} onOpenChange={setShowTradeModal}>
+        <DialogContent>
+          <DialogHeader className={isRTL ? 'text-right flex flex-col items-end' : 'text-left flex flex-col items-start'}>
+            <DialogTitle className={isRTL ? 'text-right w-full' : 'text-left w-full'}>{t('trade.makeOffer')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmitTrade} className="space-y-4">
+            <div>
+              <label className="block mb-1 font-medium">{t('trade.yourItem')}</label>
+              <select
+                className="w-full border rounded p-2"
+                value={selectedMyItemId}
+                onChange={e => setSelectedMyItemId(e.target.value)}
+                required
+              >
+                <option value="">{t('trade.selectYourItemPlaceholder')}</option>
+                {myItems.map(myItem => (
+                  <option key={myItem.id} value={myItem.id}>
+                    {myItem.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block mb-1 font-medium">{t('trade.moneyDifference')}</label>
+                <input
+                  type="number"
+                  className="w-full border rounded p-2"
+                  value={moneyDifference}
+                  onChange={e => setMoneyDifference(e.target.value)}
+                  min="0"
+                  placeholder={t('trade.moneyDifferencePlaceholder')}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block mb-1 font-medium">{t('trade.moneyDirection')}</label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={moneyDirection}
+                  onChange={e => setMoneyDirection(e.target.value as 'Pay' | 'Receive')}
+                  required
+                >
+                  <option value="">{t('trade.moneyDirectionPlaceholder')}</option>
+                  <option value="Pay">{t('trade.pay')}</option>
+                  <option value="Receive">{t('trade.receive')}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block mb-1 font-medium">{t('trade.description')}</label>
+              <textarea
+                className="w-full border rounded p-2"
+                value={tradeDescription}
+                onChange={e => setTradeDescription(e.target.value)}
+                placeholder={t('trade.descriptionPlaceholder')}
+                rows={2}
+              />
+            </div>
+            {tradeError && <div className="text-red-500 text-sm">{tradeError}</div>}
+            {tradeSuccess && <div className="text-green-600 text-sm">{tradeSuccess}</div>}
+            <DialogFooter>
+              <Button type="submit" disabled={tradeLoading}>
+                {tradeLoading ? t('common.loading') : t('trade.sendOffer')}
+              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">{t('common.cancel')}</Button>
+              </DialogClose>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

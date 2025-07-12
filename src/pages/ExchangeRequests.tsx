@@ -46,7 +46,7 @@ const ExchangeRequests = () => {
 
   const handleAccept = async (id: number) => {
     try {
-      await ExchangeService.updateExchangeRequest(id, { action: 'accept' });
+      await ExchangeService.updateExchangeRequest(id, { action: 1 });
       toast({
         title: t('exchange.success'),
         description: t('exchange.acceptSuccess'),
@@ -63,7 +63,7 @@ const ExchangeRequests = () => {
 
   const handleReject = async (id: number) => {
     try {
-      await ExchangeService.updateExchangeRequest(id, { action: 'reject' });
+      await ExchangeService.updateExchangeRequest(id, { action: 2 });
       toast({
         title: t('exchange.success'),
         description: t('exchange.rejectSuccess'),
@@ -108,7 +108,7 @@ const ExchangeRequests = () => {
             <div className="relative max-w-3xl mx-auto mb-6">
               <img
                 src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=300&fit=crop"
-                alt="Exchange and trading"
+                alt={t('exchange.heroAlt')}
                 className="w-full h-48 object-cover rounded-2xl shadow-lg"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-2xl"></div>

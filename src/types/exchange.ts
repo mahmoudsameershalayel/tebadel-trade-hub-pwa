@@ -5,9 +5,11 @@ export interface ExchangeRequestDto {
   id: number;
   offeredItem: ItemDto;
   requestedItem: ItemDto;
-  fromUser: UserDto;
-  toUser: UserDto;
-  status: 'Pending' | 'Accepted' | 'Rejected';
+  offeredByUser: UserDto;
+  requestedToUser: UserDto;
+  status: 'Pending' | 'Accepted' | 'Rejected' | 'Canceled';
+  moneyDirection: 'Pay' | 'Receive';
+  description: string;
   moneyDifference?: number;
   createdAt: string;
 }
@@ -16,10 +18,12 @@ export interface CreateExchangeRequestPayload {
   offeredItemId: number;
   requestedItemId: number;
   moneyDifference?: number;
+  moneyDirection: number;
+  description: string;
 }
 
 export interface UpdateExchangeRequestPayload {
-  action: 'accept' | 'reject';
+  action: number;
 }
 
 export interface ExchangeRequestResponse {

@@ -25,11 +25,7 @@ export interface ItemDto {
   description?: string;
   preferredExchangeNote?: string;
   status: string;
-  imagePath?: string;
-  imageURL?: string;
-  imageFileLength?: string;
   category: CategoryDto;
   customer: UserDto;
   itemImages : ItemImageDto[]
-
 }

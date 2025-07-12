@@ -14,7 +14,7 @@ export class ExchangeService {
   }
 
   static async createExchangeRequest(data: CreateExchangeRequestPayload): Promise<ExchangeRequestResponse> {
-    const response = await fetch(`${API_BASE}/exchange-requests`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
@@ -27,7 +27,7 @@ export class ExchangeService {
   }
 
   static async updateExchangeRequest(id: number, data: UpdateExchangeRequestPayload): Promise<ExchangeRequestResponse> {
-    const response = await fetch(`${API_BASE}/exchange-requests/${id}`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
@@ -40,7 +40,7 @@ export class ExchangeService {
   }
 
   static async cancelExchangeRequest(id: number): Promise<ExchangeRequestResponse> {
-    const response = await fetch(`${API_BASE}/exchange-requests/${id}`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
@@ -52,7 +52,7 @@ export class ExchangeService {
   }
 
   static async getAllExchangeRequests(): Promise<ExchangeRequestDto[]> {
-    const response = await fetch(`${API_BASE}/exchange-requests`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
@@ -64,7 +64,7 @@ export class ExchangeService {
   }
 
   static async getSentExchangeRequests(): Promise<ExchangeRequestDto[]> {
-    const response = await fetch(`${API_BASE}/exchange-requests/sent`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests/sent`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
@@ -76,7 +76,7 @@ export class ExchangeService {
   }
 
   static async getReceivedExchangeRequests(): Promise<ExchangeRequestDto[]> {
-    const response = await fetch(`${API_BASE}/exchange-requests/received`, {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests/received`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });

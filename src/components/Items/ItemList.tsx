@@ -204,14 +204,6 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                  ) : item.imageURL ? (
-                    <div className="w-full h-32 mb-4 bg-gray-100 rounded-md overflow-hidden">
-                      <img
-                        src={item.imageURL}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
                   ) : (
                     <div className="w-full h-32 mb-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center">
                       <div className="text-center text-gray-400">
