@@ -267,12 +267,23 @@ const translations = {
     confirming: 'Confirming...',
     back: 'Back',
     success: 'Success',
-    error: 'Error',
-    save: 'Save',
-    cancel: 'Cancel',
-    delete: 'Delete',
-    confirm: 'Confirm',
-    loading: 'Loading...',
+     error: 'Error',
+     save: 'Save',
+     cancel: 'Cancel',
+     delete: 'Delete',
+     confirm: 'Confirm',
+     loading: 'Loading...',
+
+     // Chat
+     online: 'Online',
+     offline: 'Offline',
+     typeMessage: 'Type a message...',
+     noMessagesYet: 'No messages yet',
+     chatConnectionFailed: 'Failed to connect to chat',
+     chatReconnected: 'Chat reconnected',
+     chatReconnectedDesc: 'You are back online',
+     messageSendFailed: 'Failed to send message',
+     yesterday: 'Yesterday',
 
     // Exchange translations
     'exchange.title': 'Exchange Requests',
@@ -704,8 +715,19 @@ const translations = {
     cancel: 'إلغاء',
     delete: 'حذف',
     confirm: 'تأكيد',
-    loading: 'جاري التحميل...',
-  },
+     loading: 'جاري التحميل...',
+
+     // Chat (Arabic)
+     online: 'متصل',
+     offline: 'غير متصل',
+     typeMessage: 'اكتب رسالة...',
+     noMessagesYet: 'لا توجد رسائل بعد',
+     chatConnectionFailed: 'فشل في الاتصال بالدردشة',
+     chatReconnected: 'تم إعادة الاتصال بالدردشة',
+     chatReconnectedDesc: 'عدت متصلاً مرة أخرى',
+     messageSendFailed: 'فشل في إرسال الرسالة',
+     yesterday: 'أمس',
+   },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
