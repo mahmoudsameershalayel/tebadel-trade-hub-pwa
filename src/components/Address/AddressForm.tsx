@@ -5,60 +5,74 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { MapPin, Save, ArrowLeft } from 'lucide-react';
 import { AddressService } from '@/services/address-service';
-import { Address, AddressForCreateUpdateDto } from '@/types/address';
+import { AddressDto, AddressForCreateUpdateDto } from '@/types/address';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-const addressSchema = z.object({
-  street: z.string().min(1, 'Street is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zipCode: z.string().min(1, 'Zip code is required'),
-  country: z.string().min(1, 'Country is required'),
-  isDefault: z.boolean(),
-});
-
-type AddressFormData = z.infer<typeof addressSchema>;
+interface City {
+  id: number;
+  name: string;
+}
 
 interface AddressFormProps {
-  address?: Address;
+  address?: AddressDto;
   onSave?: () => void;
 }
 
 const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [cities, setCities] = useState<City[]>([]);
 
-  const form = useForm<AddressFormData>({
+  useEffect(() => {
+    AddressService.getAllCities()
+      .then(cityList => setCities(cityList))
+      .catch(() => setCities([]));
+  }, []);
+
+  // Create schema with localized error messages
+  const addressSchema = z.object({
+    addressName: z.string().min(1, t('addressName') + ' ' + t('common.required')),
+    cityId: z.number({ required_error: t('city') + ' ' + t('common.required') }),
+    street: z.string().optional(),
+    famousSign: z.string().optional(),
+  });
+
+    const form = useForm<z.infer<typeof addressSchema>>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
+      addressName: address?.addressName || '',
+      cityId: address?.cityId || undefined,
       street: address?.street || '',
-      city: address?.city || '',
-      state: address?.state || '',
-      zipCode: address?.zipCode || '',
-      country: address?.country || '',
-      isDefault: address?.isDefault || false,
+      famousSign: address?.famousSign || '',
     },
   });
 
-  const onSubmit = async (data: AddressFormData) => {
+  // Reset form values when address changes (for edit mode and add mode)
+  useEffect(() => {
+    form.reset({
+      addressName: address?.addressName || '',
+      cityId: (address?.city?.id ?? address?.cityId) || undefined,
+      street: address?.street || '',
+      famousSign: address?.famousSign || '',
+    });
+  }, [address]);
+
+  const onSubmit = async (data: z.infer<typeof addressSchema>) => {
     setIsLoading(true);
     try {
       const addressData: AddressForCreateUpdateDto = {
+        addressName: data.addressName,
+        cityId: data.cityId,
         street: data.street,
-        city: data.city,
-        state: data.state,
-        zipCode: data.zipCode,
-        country: data.country,
-        isDefault: data.isDefault,
+        famousSign: data.famousSign,
         ...(address && { id: address.id }),
       };
 
@@ -92,17 +106,17 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <div className="mx-auto max-w-2xl">
-        <div className="mb-6 flex items-center gap-4">
+        <div className={`mb-6 flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate('/addresses')}
-            className="text-primary hover:text-primary/80"
+            className={`text-primary hover:text-primary/80 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             {t('back')}
           </Button>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className={`text-2xl font-bold text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
             {address ? t('editAddress') : t('addAddress')}
           </h1>
         </div>
@@ -119,6 +133,45 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
+                  name="addressName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('addressName')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder={t('addressNamePlaceholder')} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* City select dropdown */}
+                <FormField
+                  control={form.control}
+                  name="cityId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('city')}</FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="w-full border rounded px-3 py-2"
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(Number(e.target.value))}
+                        >
+                          <option value="" disabled>{t('selectCity')}</option>
+                          {cities.map(city => (
+                            <option key={city.id} value={city.id}>{city.name}</option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="street"
                   render={({ field }) => (
                     <FormItem>
@@ -131,83 +184,16 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('city')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={t('cityPlaceholder')} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('state')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={t('statePlaceholder')} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="zipCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('zipCode')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={t('zipCodePlaceholder')} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('country')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={t('countryPlaceholder')} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
                 <FormField
                   control={form.control}
-                  name="isDefault"
+                  name="famousSign"
                   render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border border-primary/20 p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">{t('defaultAddress')}</FormLabel>
-                        <div className="text-sm text-muted-foreground">
-                          {t('defaultAddressDescription')}
-                        </div>
-                      </div>
+                    <FormItem>
+                      <FormLabel>{t('famousSign')}</FormLabel>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Input {...field} placeholder={t('famousSignPlaceholder')} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -224,8 +210,8 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 bg-gradient-to-r from-primary to-accent text-primary-foreground"
-                  >
+                    className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+                    >
                     <Save className="mr-2 h-4 w-4" />
                     {isLoading ? t('saving') : t('save')}
                   </Button>

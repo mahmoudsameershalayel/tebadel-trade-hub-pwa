@@ -9,12 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ItemCard from './ItemCard';
 import { Link } from 'react-router-dom';
 import { ItemService } from '@/services/item-service';
+import { CategoryService } from '@/services/category-service';
 import { ItemDto } from '@/types/item';
+import { CategoryDto } from '@/types/category';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { ExchangeService } from '@/services/exchange-service';
 import { useToast } from '@/hooks/use-toast';
@@ -38,11 +41,15 @@ const ItemFeed = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedMainCategory, setSelectedMainCategory] = useState<string>('all');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
   const [favorites, setFavorites] = useState<string[]>([]);
-  const { t } = useLanguage();
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
+  const [mainCategories, setMainCategories] = useState<CategoryDto[]>([]);
+  const [subCategories, setSubCategories] = useState<CategoryDto[]>([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
+  const { t, isRTL } = useLanguage();
   const { state } = useAuth();
-  const isRTL = useLanguage().isRTL;
   const { toast } = useToast();
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [selectedTradeItem, setSelectedTradeItem] = useState<ItemDto | null>(null);
@@ -55,6 +62,32 @@ const ItemFeed = () => {
   const [moneyDirection, setMoneyDirection] = useState<'Pay' | 'Receive'>('Pay');
   const [tradeDescription, setTradeDescription] = useState('');
 
+  // Load categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setIsCategoriesLoading(true);
+        const categoriesData = await CategoryService.getAllCategories();
+        setCategories(categoriesData);
+        
+        // Filter main categories (categories where parent is null)
+        const mains = categoriesData.filter(cat => !cat.parent);
+        setMainCategories(mains);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        toast({
+          title: t('error'),
+          description: t('items.loadCategoriesError'),
+          variant: 'destructive',
+        });
+      } finally {
+        setIsCategoriesLoading(false);
+      }
+    };
+    loadCategories();
+  }, [t, toast]);
+
+  // Load items
   useEffect(() => {
     const loadItems = async () => {
       try {
@@ -69,19 +102,62 @@ const ItemFeed = () => {
     loadItems();
   }, [t]);
 
+  // Update subcategories when main category changes
+  useEffect(() => {
+    if (selectedMainCategory === 'all') {
+      setSubCategories([]);
+      setSelectedSubCategory('all');
+    } else {
+      const mainId = parseInt(selectedMainCategory);
+      const children = categories.filter(cat => cat.parent && cat.parent.id === mainId);
+      setSubCategories(children);
+      setSelectedSubCategory('all');
+    }
+  }, [selectedMainCategory, categories]);
+
   useEffect(() => {
     if (showTradeModal && state.isAuthenticated) {
       ItemService.getMyAllItems().then(setMyItems).catch(() => setMyItems([]));
     }
   }, [showTradeModal, state.isAuthenticated]);
 
-  // Collect unique categories from items
-  const categories = Array.from(new Set(items.map(item => item.category?.nameEN || ''))).filter(Boolean);
+  const handleMainCategoryChange = (mainCategoryId: string) => {
+    setSelectedMainCategory(mainCategoryId);
+  };
+
+  const handleSubCategoryChange = (subCategoryId: string) => {
+    setSelectedSubCategory(subCategoryId);
+  };
 
   const filteredItems = items.filter((item) => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (item.description?.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || (item.category && item.category.nameEN === selectedCategory);
+    
+    let matchesCategory = true;
+    
+    if (selectedMainCategory !== 'all') {
+      const mainId = parseInt(selectedMainCategory);
+      if (selectedSubCategory !== 'all') {
+        // Filter by specific subcategory
+        const subId = parseInt(selectedSubCategory);
+        matchesCategory = item.category?.id === subId;
+      } else {
+        // Filter by main category (item belongs to main category or any of its subcategories)
+        const itemCategory = item.category;
+        if (itemCategory) {
+          if (itemCategory.parent) {
+            // Item is in a subcategory, check if parent matches main category
+            matchesCategory = itemCategory.parent.id === mainId;
+          } else {
+            // Item is in a main category
+            matchesCategory = itemCategory.id === mainId;
+          }
+        } else {
+          matchesCategory = false;
+        }
+      }
+    }
+    
     return matchesSearch && matchesCategory;
   });
 
@@ -175,22 +251,47 @@ const ItemFeed = () => {
             </div>
           </div>
           
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedMainCategory} onValueChange={handleMainCategoryChange}>
             <SelectTrigger className="w-full sm:w-48">
               <Filter className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
-              <SelectValue placeholder={t('items.category')} />
+              <SelectValue placeholder={t('items.mainCategory')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('items.allCategories')}</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
+              {mainCategories.map((category) => (
+                <SelectItem key={category.id} value={category.id.toString()}>
+                  {isRTL ? category.nameAR : category.nameEN}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
+
+      {/* Subcategory Tabs */}
+      {selectedMainCategory !== 'all' && subCategories.length > 0 && (
+        <div className="mb-8">
+          <Tabs value={selectedSubCategory} onValueChange={handleSubCategoryChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-auto-fit gap-3 bg-background border border-border rounded-xl p-2 h-auto">
+              <TabsTrigger 
+                value="all" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200 hover:bg-muted hover:scale-105"
+              >
+                {t('items.allSubCategories')}
+              </TabsTrigger>
+              {subCategories.map((category) => (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id.toString()}
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200 hover:bg-muted hover:scale-105"
+                >
+                  {isRTL ? category.nameAR : category.nameEN}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+      )}
 
       {/* Items Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

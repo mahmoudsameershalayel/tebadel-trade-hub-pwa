@@ -1,5 +1,5 @@
 import { API_BASE } from '@/config/api-config';
-import { Address, AddressForCreateUpdateDto, ConfirmLocationDto, ApiResponse } from '@/types/address';
+import { Address, AddressForCreateUpdateDto, ConfirmLocationDto, ApiResponse, AddressDto } from '@/types/address';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,8 +10,8 @@ const getAuthHeaders = () => {
 };
 
 export const AddressService = {
-  async getAllAddresses(): Promise<Address[]> {
-    const response = await fetch(`${API_BASE}/api/address`, {
+  async getAllAddresses(): Promise<AddressDto[]> {
+    const response = await fetch(`${API_BASE}/customer/address`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -21,11 +21,11 @@ export const AddressService = {
     }
 
     const data = await response.json();
-    return data;
+    return Array.isArray(data) ? data : (data?.data || []);
   },
 
-  async getAddressById(id: number): Promise<Address> {
-    const response = await fetch(`${API_BASE}/api/address/${id}`, {
+  async getAddressById(id: number): Promise<AddressDto> {
+    const response = await fetch(`${API_BASE}/customer/address/${id}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -35,11 +35,11 @@ export const AddressService = {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   },
 
-  async createAddress(address: AddressForCreateUpdateDto): Promise<ApiResponse<Address>> {
-    const response = await fetch(`${API_BASE}/api/address`, {
+  async createAddress(address: AddressForCreateUpdateDto): Promise<ApiResponse<AddressDto>> {
+    const response = await fetch(`${API_BASE}/customer/address`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(address),
@@ -52,8 +52,8 @@ export const AddressService = {
     return await response.json();
   },
 
-  async updateAddress(address: AddressForCreateUpdateDto): Promise<ApiResponse<Address>> {
-    const response = await fetch(`${API_BASE}/api/address`, {
+  async updateAddress(address: AddressForCreateUpdateDto): Promise<ApiResponse<AddressDto>> {
+    const response = await fetch(`${API_BASE}/customer/address`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(address),
@@ -67,7 +67,7 @@ export const AddressService = {
   },
 
   async deleteAddress(id: number): Promise<ApiResponse<void>> {
-    const response = await fetch(`${API_BASE}/api/address/${id}`, {
+    const response = await fetch(`${API_BASE}/customer/address/${id}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -80,7 +80,7 @@ export const AddressService = {
   },
 
   async confirmLocation(locationData: ConfirmLocationDto): Promise<ApiResponse<void>> {
-    const response = await fetch(`${API_BASE}/api/address/confirm-location`, {
+    const response = await fetch(`${API_BASE}/customer/address/confirm-location`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(locationData),
@@ -91,5 +91,17 @@ export const AddressService = {
     }
 
     return await response.json();
+  },
+
+  async getAllCities(): Promise<any[]> {
+    const response = await fetch(`${API_BASE}/customer/address/all-cities`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch cities');
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : (data?.data || []);
   },
 };

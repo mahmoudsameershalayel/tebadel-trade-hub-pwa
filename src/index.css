@@ -154,3 +154,24 @@ All colors MUST be HSL.
     box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.1), 0 4px 6px -2px rgba(245, 158, 11, 0.05);
   }
 }
+
+/* Allow pointer and touch events on dialog overlays and content */
+[data-state="open"].dialog-content,
+[data-state="open"].dialog-overlay,
+.dialog-content,
+.dialog-overlay {
+  pointer-events: auto !important;
+  touch-action: auto !important;
+}
+
+/* Ensure leaflet map is fully interactive */
+.leaflet-container {
+  touch-action: pan-x pan-y !important;
+  -ms-touch-action: pan-x pan-y !important;
+  pointer-events: auto !important;
+}
+
+/* Custom grid utilities */
+.grid-cols-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}

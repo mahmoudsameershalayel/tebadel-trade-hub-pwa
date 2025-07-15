@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ItemDto } from '@/types/item';
 
 interface Item {
   id: string;
@@ -20,7 +21,7 @@ interface Item {
 }
 
 interface ItemCardProps {
-  item: any; // Accepts ItemDto or compatible
+  item: ItemDto; // Accepts ItemDto or compatible
   onTradeClick?: (item: any) => void;
   onFavoriteClick?: (item: any) => void;
   isFavorited?: boolean;
@@ -50,7 +51,16 @@ const ItemCard: React.FC<ItemCardProps> = ({
   // Use first image from itemImages if available
   const firstImage = item.itemImages && item.itemImages.length > 0
     ? item.itemImages[0].imageURL
-    : (item.images && item.images[0]) || '/api/placeholder/300/300';
+    : '/api/placeholder/300/300';
+
+  // Format address display
+  const formatAddress = () => {
+    const parts = [];
+    if (item.address?.city?.name) parts.push(item.address.city.name);
+    if (item.address?.street) parts.push(item.address.street);
+    if (item.address?.famousSign) parts.push(item.address.famousSign);
+    return parts.join(' - ') || 'No address';
+  };
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
@@ -76,13 +86,6 @@ const ItemCard: React.FC<ItemCardProps> = ({
             }`}
           />
         </Button>
-
-        {/* Condition Badge */}
-        <Badge
-          className={`absolute top-2 left-2 ${conditionColors[item.condition]}`}
-        >
-          {item.condition}
-        </Badge>
       </div>
 
       <CardContent className="p-4">
@@ -97,11 +100,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
           <div className="flex items-center text-sm text-gray-500 space-x-4 rtl:space-x-reverse">
             <div className="flex items-center">
               <MapPin className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
-              {item.location}
-            </div>
-            <div className="flex items-center">
-              <Clock className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
-              {formatDate(item.createdAt)}
+              {formatAddress()}
             </div>
           </div>
 
@@ -109,29 +108,9 @@ const ItemCard: React.FC<ItemCardProps> = ({
             <span>by {item.customer.fullName}</span>
             <Badge variant="outline">{typeof item.category === 'string'
               ? item.category
-              : ( item.category?.nameAr || item.category?.nameAR || item.category?.id)}
+              : ( item.category?.nameAR || item.category?.nameEN || item.category?.id)}
             </Badge>
           </div>
-
-          {(item.preferredCategories || []).length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs text-gray-500">{t('items.lookingFor')}</p>
-              <div className="flex flex-wrap gap-1">
-                {(item.preferredCategories || []).slice(0, 3).map((cat, idx) => (
-                  <Badge key={typeof cat === 'object' ? cat.id : cat} variant="secondary" className="text-xs">
-                    {typeof cat === 'string'
-                      ? cat
-                      : (cat.nameEN || cat.nameAR || cat.id)}
-                  </Badge>
-                ))}
-                {(item.preferredCategories || []).length > 3 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{typeof (item.preferredCategories || []).length === 'number' ? (item.preferredCategories || []).length - 3 : ''}
-                  </Badge>
-                )}
-              </div>
-            </div>
-          )}
 
           <Button
             onClick={() => onTradeClick?.(item)}

@@ -47,6 +47,13 @@ const Header = () => {
       </Link>
       {state.isAuthenticated && (
         <>
+        <Link
+            to="/addresses"
+            className="text-gray-700 hover:text-emerald-600 transition-colors"
+            onClick={onItemClick}
+          >
+            {t('nav.myAddresses')}
+          </Link>
           <Link
             to="/my-items"
             className="text-gray-700 hover:text-emerald-600 transition-colors"
@@ -54,6 +61,7 @@ const Header = () => {
           >
             {t('nav.myItems')}
           </Link>
+          
           <Link
             to="/offers"
             className="text-gray-700 hover:text-emerald-600 transition-colors"
@@ -124,6 +132,7 @@ const Header = () => {
                     <Settings className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
                     {t('nav.profile')}
                   </DropdownMenuItem>
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />

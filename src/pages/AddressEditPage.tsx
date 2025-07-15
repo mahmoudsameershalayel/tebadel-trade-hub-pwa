@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { AddressService } from '@/services/address-service';
-import { Address } from '@/types/address';
+import { AddressDto } from '@/types/address';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AddressForm from '@/components/Address/AddressForm';
@@ -10,7 +10,7 @@ const AddressEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [address, setAddress] = useState<Address | null>(null);
+  const [address, setAddress] = useState<AddressDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

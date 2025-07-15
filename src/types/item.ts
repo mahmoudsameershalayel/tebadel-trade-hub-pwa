@@ -1,4 +1,5 @@
 
+import { AddressDto } from './address';
 import { CategoryDto } from './category';
 import { UserDto } from './user';
 
@@ -17,6 +18,7 @@ export interface ItemForCreateUpdateDto {
   description?: string;
   preferredExchangeNote?: string;
   categoryId: number;
+  addressId: number;
 }
 
 export interface ItemDto {
@@ -26,6 +28,7 @@ export interface ItemDto {
   preferredExchangeNote?: string;
   status: string;
   category: CategoryDto;
+  address: AddressDto;
   customer: UserDto;
   itemImages : ItemImageDto[]
 }
