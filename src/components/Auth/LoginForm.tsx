@@ -83,14 +83,20 @@ const LoginForm = () => {
             </Button>
           </form>
 
-          <div className="text-center">
-            <Link
-              to="/register"
-              className="text-sm text-amber-600 hover:text-orange-700 transition-colors font-medium"
-            >
-              {t('auth.switchToRegister')}
-            </Link>
-          </div>
+            <div className="text-center space-y-2">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-amber-600 hover:text-orange-700 transition-colors font-medium block"
+              >
+                {t('auth.forgotPassword')}
+              </Link>
+              <Link
+                to="/register"
+                className="text-sm text-amber-600 hover:text-orange-700 transition-colors font-medium block"
+              >
+                {t('auth.switchToRegister')}
+              </Link>
+            </div>
         </CardContent>
       </Card>
     </div>

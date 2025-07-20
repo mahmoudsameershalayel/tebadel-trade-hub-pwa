@@ -10,6 +10,9 @@ import Header from "@/components/Layout/Header";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
+import VerifyCode from "@/pages/VerifyCode";
+import ResetPassword from "@/pages/ResetPassword";
 import PostItem from "@/pages/PostItem";
 import MyItems from "@/pages/MyItems";
 import ExchangeRequests from "@/pages/ExchangeRequests";
@@ -102,6 +105,9 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/verify-code" element={<VerifyCode />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/post-item" element={<ProtectedRoute><PostItem /></ProtectedRoute>} />
                   <Route path="/my-items" element={<ProtectedRoute><MyItems /></ProtectedRoute>} />
                   <Route path="/exchange-requests" element={<ProtectedRoute><ExchangeRequests /></ProtectedRoute>} />
