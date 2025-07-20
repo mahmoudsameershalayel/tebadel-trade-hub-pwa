@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { AddressDto } from '@/types/address';
@@ -77,6 +77,14 @@ const AddressMap: React.FC<AddressMapProps> = ({
               parseFloat(address.locationLong!)
             ]}
           >
+            <Tooltip
+              direction="top"
+              offset={[0, -20]}
+              permanent
+              className="!bg-white/90 !text-gray-900 !rounded-lg !shadow-lg !px-3 !py-1 !border !border-gray-200 !font-semibold !text-xs !backdrop-blur-sm"
+            >
+              {address.addressName || address.street}
+            </Tooltip>
             <Popup>
               <div className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                 <h3 className="font-semibold mb-1">

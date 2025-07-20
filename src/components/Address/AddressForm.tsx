@@ -9,6 +9,7 @@ import { AddressDto, AddressForCreateUpdateDto } from '@/types/address';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,9 +23,10 @@ interface City {
 interface AddressFormProps {
   address?: AddressDto;
   onSave?: () => void;
+  onCancel?: () => void;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
+const AddressForm: React.FC<AddressFormProps> = ({ address, onSave, onCancel }) => {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -106,7 +108,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <div className="mx-auto max-w-2xl">
-        <div className={`mb-6 flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+        <div className={`mb-6 flex justify-between items-center gap-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           <Button
             variant="ghost"
             size="sm"
@@ -153,17 +155,20 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
                     <FormItem>
                       <FormLabel>{t('city')}</FormLabel>
                       <FormControl>
-                        <select
-                          {...field}
-                          className="w-full border rounded px-3 py-2"
-                          value={field.value ?? ''}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={val => field.onChange(val ? Number(val) : undefined)}
+                          disabled={isLoading || cities.length === 0}
                         >
-                          <option value="" disabled>{t('selectCity')}</option>
-                          {cities.map(city => (
-                            <option key={city.id} value={city.id}>{city.name}</option>
-                          ))}
-                        </select>
+                          <SelectTrigger className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                            <SelectValue placeholder={t('selectCity')} />
+                          </SelectTrigger>
+                          <SelectContent className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                            {cities.map(city => (
+                              <SelectItem key={city.id} value={String(city.id)}>{city.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,7 +207,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave }) => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate('/addresses')}
+                    onClick={onCancel ? onCancel : () => navigate('/addresses')}
                     className="flex-1"
                   >
                     {t('cancel')}

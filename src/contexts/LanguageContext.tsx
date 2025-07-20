@@ -21,6 +21,10 @@ const translations = {
     'nav.register': 'Register',
     'nav.logout': 'Logout',
 
+    // App Title & Description
+    'app.title': 'Tebadel - Trade Items, Not Money',
+    'app.description': 'Trade items without money on Tebadel - the modern barter system',
+
     // Auth
     'auth.welcome': 'Welcome to Tebadel',
     'auth.subtitle': 'Trade items with or without money',
@@ -126,6 +130,7 @@ const translations = {
     // Items
     'items.title': 'Available Items',
     'items.search': 'Search items...',
+    'items.selectAddress': 'Select Address',
     'items.category': 'Category',
     'items.allCategories': 'All Categories',
     'items.postNew': 'Post New Item',
@@ -135,11 +140,14 @@ const translations = {
     'items.status.inExchange': 'In Exchange',
     'items.status.exchanged': 'Exchanged',
     'items.image': 'Image',
+    'items.mainCategory' : "Main Category",
+    'items.subCategory' : "Sub Category",
     "myItems.yourItems": "Your items",
     'items.noImage': 'No image',
     'items.loadError': 'Failed to load items',
     'items.deleteSuccess': 'Item deleted successfully',
-
+    'items.publishedOn': 'Published on:',
+    'items.by': 'by',
 
     // Trading & Money Difference
     'trade.makeOffer': 'Make Offer',
@@ -267,23 +275,23 @@ const translations = {
     confirming: 'Confirming...',
     back: 'Back',
     success: 'Success',
-     error: 'Error',
-     save: 'Save',
-     cancel: 'Cancel',
-     delete: 'Delete',
-     confirm: 'Confirm',
-     loading: 'Loading...',
+    error: 'Error',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    loading: 'Loading...',
 
-     // Chat
-     online: 'Online',
-     offline: 'Offline',
-     typeMessage: 'Type a message...',
-     noMessagesYet: 'No messages yet',
-     chatConnectionFailed: 'Failed to connect to chat',
-     chatReconnected: 'Chat reconnected',
-     chatReconnectedDesc: 'You are back online',
-     messageSendFailed: 'Failed to send message',
-     yesterday: 'Yesterday',
+    // Chat
+    online: 'Online',
+    offline: 'Offline',
+    typeMessage: 'Type a message...',
+    noMessagesYet: 'No messages yet',
+    chatConnectionFailed: 'Failed to connect to chat',
+    chatReconnected: 'Chat reconnected',
+    chatReconnectedDesc: 'You are back online',
+    messageSendFailed: 'Failed to send message',
+    yesterday: 'Yesterday',
 
     // Exchange translations
     'exchange.title': 'Exchange Requests',
@@ -375,7 +383,7 @@ const translations = {
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
-    'nav.myItems': 'عناصري',
+    'nav.myItems': 'أغراضي',
     'nav.myAddresses': 'عناويني',
     'nav.offers': 'عروض التبادل',
     'nav.messages': 'الرسائل',
@@ -384,6 +392,10 @@ const translations = {
     'nav.login': 'تسجيل الدخول',
     'nav.register': 'إنشاء حساب',
     'nav.logout': 'تسجيل خروج',
+
+    // App Title & Description
+    'app.title': 'منصة تبادل - نظام المقايضة الحديث',
+    'app.description': 'قم بتبادل الأغراض على منصة تبادل - نظام المقايضة الحديث',
 
     // Auth
     'auth.welcome': 'مرحباً بك في تبادل',
@@ -424,22 +436,22 @@ const translations = {
     'landing.feature1.description': 'تبادل الأشياء بدون بيع مباشر — ويمكنك دفع أو استلام فرق نقدي حسب رغبتك.',
     'landing.feature2.title': 'مجتمع آمن',
     'landing.feature2.description': 'انضم إلى مجتمع موثوق من التجار مع ملفات شخصية وتقييمات محققة.',
-    'landing.feature3.title': 'تداول آمن',
+    'landing.feature3.title': 'تبادل آمن',
     'landing.feature3.description': 'معاملات محمية مع حل النزاعات المدمج والدعم.',
     'landing.feature4.title': 'مطابقة فورية',
     'landing.feature4.description': 'خوارزمية ذكية تربطك بالتجار الذين يريدون ما لديك.',
 
     // Services
     'landing.servicesTitle': 'خدماتنا',
-    'landing.servicesSubtitle': 'حلول تداول شاملة مصممة للسوق العربي الحديث',
+    'landing.servicesSubtitle': 'حلول تبادل شاملة مصممة للسوق العربي الحديث',
     'landing.services.direct.title': 'تبادل مباشر للأشياء',
     'landing.services.direct.description': 'تبادل الأشياء مباشرة بدون تدخل المال. مثالي للتبادلات متساوية القيمة.',
-    'landing.services.money.title': 'تداول بفرق مالي',
+    'landing.services.money.title': 'تبادل بفرق مالي',
     'landing.services.money.description': 'أضف أو استلم مال لموازنة التبادل عندما تكون الأشياء بقيم مختلفة.',
     'landing.services.secure.title': 'معاملات آمنة',
     'landing.services.secure.description': 'جميع التبادلات محمية بنظام الضمان الآمن وحل النزاعات.',
     'landing.services.community.title': 'تحقق المجتمع',
-    'landing.services.community.description': 'نظام تحقق المستخدمين يضمن التداول الآمن مع أعضاء مجتمع موثوقين.',
+    'landing.services.community.description': 'نظام تحقق المستخدمين يضمن التبادل الآمن مع أعضاء مجتمع موثوقين.',
 
     // Stats
     'landing.stats.traders': 'تاجر نشط',
@@ -448,17 +460,17 @@ const translations = {
 
     // Testimonials
     'landing.testimonialsTitle': 'ماذا يقول مستخدمونا',
-    'landing.testimonialsSubtitle': 'تجارب حقيقية من مجتمع التداول لدينا',
+    'landing.testimonialsSubtitle': 'تجارب حقيقية من مجتمع التبادل لدينا',
     'landing.testimonials.user1.name': 'أحمد الراشد',
     'landing.testimonials.user1.text': 'تبادل جعل الأمر سهلاً جداً لتبديل لابتوبي القديم بدراجة هوائية. خاصية الفرق المالي كانت مثالية!',
     'landing.testimonials.user2.name': 'فاطمة حسن',
-    'landing.testimonials.user2.text': 'أحب مدى أمان وحماية المنصة. التداول لم يكن بهذه السهولة من قبل.',
+    'landing.testimonials.user2.text': 'أحب مدى أمان وحماية المنصة. التبادل لم يكن بهذه السهولة من قبل.',
     'landing.testimonials.user3.name': 'عمر محمود',
     'landing.testimonials.user3.text': 'المجتمع رائع ودعم العملاء ممتاز. أنصح به بشدة!',
 
     // FAQ
     'landing.faqTitle': 'الأسئلة الشائعة',
-    'landing.faqSubtitle': 'كل ما تحتاج معرفته عن التداول في تبادل',
+    'landing.faqSubtitle': 'كل ما تحتاج معرفته عن التبادل في تبادل',
     'landing.faq.q1.question': 'كيف تعمل خاصية الفرق المالي؟',
     'landing.faq.q1.answer': 'عند تبادل أشياء بقيم مختلفة، يمكنك إضافة أو استلام مال لموازنة التبادل. هذا يجعل التبادل العادل ممكناً لأي أشياء.',
     'landing.faq.q2.question': 'هل معلوماتي الشخصية آمنة؟',
@@ -466,7 +478,7 @@ const translations = {
     'landing.faq.q3.question': 'ماذا لو كان لدي نزاع مع تاجر آخر؟',
     'landing.faq.q3.answer': 'لدينا نظام شامل لحل النزاعات مع فريق دعم مخصص لمساعدة حل أي مشاكل بعدالة.',
     'landing.faq.q4.question': 'هل هناك رسوم لاستخدام تبادل؟',
-    'landing.faq.q4.answer': 'التداول الأساسي مجاني! نحن نتقاضى رسوم صغيرة فقط للميزات المتميزة ومعالجة الدفع الآمن.',
+    'landing.faq.q4.answer': 'التبادل الأساسي مجاني! نحن نتقاضى رسوم صغيرة فقط للميزات المتميزة ومعالجة الدفع الآمن.',
 
     // Contact
     'landing.contactTitle': 'تواصل معنا',
@@ -484,8 +496,8 @@ const translations = {
     'landing.contact.form.send': 'إرسال الرسالة',
 
     // CTA
-    'landing.ctaTitle': 'مستعد لبدء التداول؟',
-    'landing.ctaSubtitle': 'انضم إلى مجتمعنا اليوم واكتشف متعة التداول المستدام.',
+    'landing.ctaTitle': 'مستعد لبدء التبادل؟',
+    'landing.ctaSubtitle': 'انضم إلى مجتمعنا اليوم واكتشف متعة التبادل المستدام.',
     'landing.ctaButton': 'أنشئ حسابك',
 
     // Items
@@ -493,9 +505,16 @@ const translations = {
     'items.search': 'البحث عن أغراض...',
     'items.category': 'الفئة',
     'items.allCategories': 'جميع الفئات',
+    'items.allSubCategories': "جميع الفئات الفرعية",
     'items.postNew': 'نشر غرض جديد',
     'items.myItems': 'أغراضي',
     'items.noItems': 'لم يتم العثور على أغراض',
+    'items.mainCategory' : "الفئة الرئيسية",
+    'items.selectMainCategory' : "اختر الفئة الرئيسية",
+    'items.subCategory' : "الفئة الفرعية",
+    'items.selectSubCategory' : "اختر الفئة الفرعية",
+    'items.selectAddress': 'اختر مكان الغرض',
+    'items.address' : "مكان الغرض",
     'items.status.available': 'متاح',
     'items.status.inExchange': 'قيد التبديل',
     'items.status.exchanged': 'تم التبديل',
@@ -503,8 +522,10 @@ const translations = {
     'items.noImage': 'لا توجد صورة',
     'items.loadError': 'فشل في تحميل الأغراض',
     'items.deleteSuccess': 'تم حذف الغرض بنجاح',
+    'items.publishedOn': 'تاريخ النشر:',
     'items.subTitle': 'تصفح وابحث عن أغراض للتبادل مع الآخرين',
     'items.lookingFor': 'يبحث عن:',
+    'items.by': 'بواسطة',
     "myItems.yourItems": "أغراضك",
     "myItems.deleteConfirm": "تأكيد حذف الغرض",
     "myItems.itemDetails": "تفاصيل الغرض",
@@ -538,6 +559,7 @@ const translations = {
     'trade.rejectOffer': 'رفض العرض',
     'trade.counterOffer': 'عرض مضاد',
     'trade.negotiate': 'تفاوض',
+    'trade.noDifference': 'لا يوجد فرق مال',
     'trade.selectYourItem': 'يرجى اختيار أحد أغراضك لتقديمه',
     'trade.selectYourItemPlaceholder': 'اختر غرضك...',
     'trade.moneyDifferencePlaceholder': 'أدخل فرق المال (اختياري)',
@@ -554,6 +576,7 @@ const translations = {
     'common.loading': 'جاري التحميل...',
     'common.error': 'حدث خطأ ما',
     'common.save': 'حفظ',
+    'common.success': 'نجاح',
     'common.cancel': 'إلغاء',
     'common.delete': 'حذف',
     'common.edit': 'تعديل',
@@ -562,10 +585,11 @@ const translations = {
     'common.accept': 'قبول',
     'common.reject': 'رفض',
     'common.required': 'مطلوب',
-    'myItems.subtitle': 'إدارة عناصرك وتتبع التبادلات',
+    'myItems.subtitle': 'إدارة أغراضك وتتبع التبادلات',
 
     // Item Image
-    'itemImage.heading': 'صورة الغرض',
+    'itemImage.heading': 'صور الغرض',
+    uploadItemImage: "رفع صورة الغرض",
     'itemImage.noImage': 'لم يتم تحميل صورة',
     'itemImage.selectImageError': 'يرجى اختيار ملف صورة',
     'itemImage.sizeError': 'يجب أن يكون حجم الصورة أقل من 5 ميجابايت',
@@ -589,7 +613,7 @@ const translations = {
     'items.updateSuccess': 'تم تحديث الغرض بنجاح',
     'items.createSuccess': 'تم إنشاء الغرض بنجاح',
     'items.loadCategoriesError': 'فشل في تحميل الفئات',
-    'exchange.receivedRequest' : 'الطلبات الواردة',
+    'exchange.receivedRequest': 'الطلبات الواردة',
     'exchange.pending': 'قيد الانتظار',
     'exchange.accepted': 'تم القبول',
     'exchange.rejected': 'مرفوض',
@@ -615,20 +639,25 @@ const translations = {
     'exchange.noReceivedRequestsDesc': 'لم تستلم أي طلبات تبادل بعد',
     'exchange.refresh': 'تحديث',
     'exchange.status.pending': 'قيد الانتظار',
-  'exchange.yourItem': 'غرضك',
-  'exchange.theirItem': 'غرضهم',
+    'exchange.yourItem': 'غرضك',
+    'exchange.theirItem': 'غرضهم',
+    'exchange.status.accepted': 'تمت الموافقة',
     'exchange.moneyDifference': 'فرق المال',
     'exchange.from': 'من',
     'exchange.to': 'إلى',
     'exchange.cancel': 'إلغاء',
     'exchange.status.cancelled': 'ملغي',
-    'exchange.accept' : 'قبول',
-    'exchange.reject' :'رفض',
-
+    'exchange.accept': 'قبول',
+    'exchange.reject': 'رفض',
+    'exchange.startChat' : "ابدأ الدردشة",
+    'chat.typeMessage' : "اختر محادثة من القائمة",
+    'chat.noMessagesYet' : "لا يوجد محادثات",
 
     // Address
-    'selectCity' :'اختر المدينة',
-
+    'selectCity': 'اختر المدينة',
+    hideMap: "إخفاء الخريطة",
+    showMap: "إظهار الخريطة",
+    addressesOnMap: "العناوين على الخريطة",
     // Exchange requests
     exchangeRequests: 'طلبات التبادل',
     sentRequests: 'الطلبات المرسلة',
@@ -648,7 +677,7 @@ const translations = {
     moneyDifference: 'الفرق المالي',
     optional: 'اختياري',
     offeredItem: 'الغرض المعروض',
-  requestedItem: 'الغرض المطلوب',
+    requestedItem: 'الغرض المطلوب',
     fromUser: 'من',
     toUser: 'إلى',
     exchangeRequestError: 'فشل في معالجة طلب التبادل',
@@ -715,19 +744,19 @@ const translations = {
     cancel: 'إلغاء',
     delete: 'حذف',
     confirm: 'تأكيد',
-     loading: 'جاري التحميل...',
+    loading: 'جاري التحميل...',
 
-     // Chat (Arabic)
-     online: 'متصل',
-     offline: 'غير متصل',
-     typeMessage: 'اكتب رسالة...',
-     noMessagesYet: 'لا توجد رسائل بعد',
-     chatConnectionFailed: 'فشل في الاتصال بالدردشة',
-     chatReconnected: 'تم إعادة الاتصال بالدردشة',
-     chatReconnectedDesc: 'عدت متصلاً مرة أخرى',
-     messageSendFailed: 'فشل في إرسال الرسالة',
-     yesterday: 'أمس',
-   },
+    // Chat (Arabic)
+    online: 'متصل',
+    offline: 'غير متصل',
+    typeMessage: 'اكتب رسالة...',
+    noMessagesYet: 'لا توجد رسائل بعد',
+    chatConnectionFailed: 'فشل في الاتصال بالدردشة',
+    chatReconnected: 'تم إعادة الاتصال بالدردشة',
+    chatReconnectedDesc: 'عدت متصلاً مرة أخرى',
+    messageSendFailed: 'فشل في إرسال الرسالة',
+    yesterday: 'أمس',
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

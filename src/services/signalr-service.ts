@@ -1,5 +1,6 @@
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { ChatMessage } from '@/types/message';
+import { API_BASE } from '../config/api-config.js';
 
 class SignalRService {
   private connection: HubConnection | null = null;
@@ -17,10 +18,8 @@ class SignalRService {
     }
 
     this.connection = new HubConnectionBuilder()
-      .withUrl(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/chathub`, {
-        accessTokenFactory: () => token,
-      })
-      .withAutomaticReconnect([0, 2000, 10000, 30000])
+      .withUrl("https://tabadal20250701211825.azurewebsites.net/chathub?access_token=" + encodeURIComponent(token))
+      .withAutomaticReconnect()
       .configureLogging(LogLevel.Information)
       .build();
 
@@ -28,12 +27,12 @@ class SignalRService {
     this.connection.on('ReceiveMessage', (message: any) => {
       const chatMessage: ChatMessage = {
         id: message.id || Date.now().toString(),
-        content: message.content,
+        content: message.message,
         senderId: message.senderId,
         receiverId: message.receiverId,
         senderName: message.senderName,
         receiverName: message.receiverName,
-        sentAt: new Date(message.sentAt),
+        sentAt: new Date(message.timestamp),
         isRead: message.isRead || false,
         isSent: false, // This is a received message
       };

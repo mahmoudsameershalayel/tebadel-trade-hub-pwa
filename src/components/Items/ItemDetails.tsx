@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ItemService } from '@/services/item-service';
+import { Calendar, ChevronLeft, MapPin, User } from 'lucide-react';
 
 interface ItemDetailsProps {
   item: ItemDto;
@@ -39,6 +40,30 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
       setFade(true);
     }, 200);
   };
+  const formatCategory = () => {
+    if (!item.category) return '';
+    const name = isRTL ? item.category.nameAR : item.category.nameEN;
+    if (item.category.parent) {
+      const parentName = isRTL ? item.category.parent.nameAR : item.category.parent.nameEN;
+      return (
+        <span className="inline-flex items-center gap-1">
+          <span className="font-medium text-gray-500">{parentName}</span>
+          <ChevronLeft className="inline w-4 h-4 text-gray-400" />
+          <span className="font-semibold text-gray-900">{name}</span>
+        </span>
+      );
+    }
+    return <span className="font-semibold text-gray-900">{name}</span>;
+  };
+
+  const formatAddress = () => {
+    const parts = [];
+    if (item.address?.city?.name) parts.push(item.address.city.name);
+    if (item.address?.street) parts.push(item.address.street);
+    if (item.address?.famousSign) parts.push(item.address.famousSign);
+    return parts.join(' - ') || 'لا يوجد عنوان';
+  };
+
 
   const getStatusColor = (status: ItemDto['status']) => {
     switch (status) {
@@ -50,6 +75,20 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+
+  const getStatusText = (status: ItemDto['status']) => {
+    switch (status) {
+      case 'Avaliable':
+        return t('items.status.available') || 'Available';
+      case 'Pending':
+        return t('items.status.inExchange') || 'In Exchange';
+      case 'Exchanged':
+        return t('items.status.exchanged') || 'Exchanged';
+      default:
+        return status;
     }
   };
 
@@ -72,15 +111,15 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-md mx-auto flex flex-col">
       <CardHeader>
         <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-          <CardTitle className={`text-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
+          <Badge className={getStatusColor(item.status)}>
+            {getStatusText(item.status)}
+          </Badge>  <CardTitle className={`text-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
             {item.title}
           </CardTitle>
-          <Badge className={getStatusColor(item.status)}>
-            {item.status}
-          </Badge>
+
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -89,7 +128,7 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
             <img
               src={images[currentImage].imageURL}
               alt={item.title}
-              className={`w-full h-full object-cover transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
+              className={`w-full h-full object-contain transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
             />
             {images.length > 1 && (
               <>
@@ -120,25 +159,18 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className={isRTL ? 'text-right' : 'text-left'}>
-            <h3 className="font-semibold text-sm text-muted-foreground mb-1">{t('myItems.category')}</h3>
-            <p className="text-lg">{isRTL? item.category.nameAR : item.category.nameEN}</p>
-          </div>
-          <div className={isRTL ? 'text-right' : 'text-left'}>
-            <h3 className="font-semibold text-sm text-muted-foreground mb-1">{t('myItems.owner')}</h3>
-            <p className="text-lg">{item.customer.fullName}</p>
-            <p className="text-sm text-muted-foreground">{item.customer.phone}</p>
-          </div>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <h3 className="font-semibold text-sm text-muted-foreground mb-1">{t('myItems.category')}</h3>
+          <Badge className="bg-gradient-to-r from-emerald-100 to-amber-100 text-emerald-800 border-0 px-3 py-1 rounded-full shadow-sm pointer-events-auto">
+            {formatCategory()}
+          </Badge>
         </div>
-
         {item.description && (
           <div className={isRTL ? 'text-right' : 'text-left'}>
             <h3 className="font-semibold text-sm text-muted-foreground mb-2">{t('myItems.description')}</h3>
             <p className="text-base leading-relaxed">{item.description}</p>
           </div>
         )}
-
         {item.preferredExchangeNote && (
           <div className={isRTL ? 'text-right' : 'text-left'}>
             <h3 className="font-semibold text-sm text-muted-foreground mb-2">{t('myItems.preferredExchange')}</h3>
@@ -147,21 +179,47 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
             </div>
           </div>
         )}
+      
+        <div className="flex items-center">
+          <MapPin className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
+          {formatAddress()}
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <span className="flex items-center">
+            <User className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
+            {item.customer.fullName}
+          </span>
+          <span className="text-muted-foreground text-xs">{item.customer.phone}</span>
+        </div>
+        {item.createdAtDate && item.createdAtTime && (
+          <div className="flex items-center">
+            <Calendar className="h-4 w-4 mr-1" />
+            <span className="text-xs ">
+              {item.createdAtDate}
+            </span>
+          </div>
+        )}
 
-        <div className={`flex gap-4 pt-4 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+
+
+
+
+        <div className={`flex flex-col gap-2 pt-4 sm:flex-row sm:gap-4 ${isRTL ? 'sm:flex-row-reverse sm:justify-end' : 'sm:flex-row sm:justify-start'}`}>
           {onEdit && (
             <Button onClick={onEdit} className="flex-1">
               {t('myItems.edit')}
             </Button>
           )}
+          <Button onClick={handleShowQr} className="flex-1" variant="secondary" disabled={qrLoading}>
+            {qrLoading ? t('myItems.qrLoading') : t('myItems.showQr')}
+          </Button>
           {onClose && (
             <Button variant="outline" onClick={onClose} className="flex-1">
               {t('myItems.close')}
             </Button>
           )}
-          <Button onClick={handleShowQr} className="flex-1" variant="secondary" disabled={qrLoading}>
-            {qrLoading ? t('myItems.qrLoading') : t('myItems.showQr')}
-          </Button>
+
         </div>
         {(qrUrl || qrError) && (
           <div className="flex flex-col items-center mt-6">

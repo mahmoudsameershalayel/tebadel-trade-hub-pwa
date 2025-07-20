@@ -27,15 +27,15 @@ const PostItem = () => {
             <div className="relative max-w-2xl mx-auto mb-6">
               <img
                 src="https://images.unsplash.com/photo-1466442929976-97f336a657be?w=800&h=300&fit=crop"
-                alt="Traditional marketplace representing trade and exchange"
+                alt={t('items.image')}
                 className="w-full h-48 object-cover rounded-2xl shadow-lg"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-2xl"></div>
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                  Add New Item for Exchange
+                  {t('items.postNew')}
                 </h1>
-                <p className="text-amber-100">Share what you want to trade with the community</p>
+                <p className="text-amber-100">{t('items.subTitle')}</p>
               </div>
             </div>
           </div>
@@ -43,9 +43,7 @@ const PostItem = () => {
           {/* Form Card */}
           <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
-              <CardTitle className={`text-xl ${isRTL ? 'text-right' : 'text-left'}`}>
-                Item Details
-              </CardTitle>
+              <CardTitle className={`text-xl ${isRTL ? 'text-right' : 'text-left'}`}>{t('myItems.itemDetails')}</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <ItemForm 

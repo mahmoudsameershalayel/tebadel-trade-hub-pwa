@@ -30,5 +30,8 @@ export interface ItemDto {
   category: CategoryDto;
   address: AddressDto;
   customer: UserDto;
-  itemImages : ItemImageDto[]
+  itemImages : ItemImageDto[];
+  createdAtDate?: string;
+  createdAtTime?: string;
+  createdAt?: string;
 }

@@ -20,6 +20,8 @@ import AddressEditPage from "@/pages/AddressEditPage";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useEffect } from "react";
+import ChatPage from "./pages/Chat";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +72,19 @@ const PWAManager = () => {
   return null;
 };
 
+// Localize document title and meta description
+const LocalizedMeta = () => {
+  const { t } = useLanguage();
+  useEffect(() => {
+    document.title = t('app.title');
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', t('app.description'));
+    }
+  }, [t]);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -79,6 +94,7 @@ const App = () => (
         <AuthProvider>
           <BrowserRouter>
             <PWAManager />
+            <LocalizedMeta />
             <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
               <Header />
               <main>
@@ -94,6 +110,7 @@ const App = () => (
                   <Route path="/addresses/new" element={<ProtectedRoute><AddressForm /></ProtectedRoute>} />
                   <Route path="/addresses/edit/:id" element={<ProtectedRoute><AddressEditPage /></ProtectedRoute>} />
                   <Route path="/offers" element={<ProtectedRoute><ExchangeRequests /></ProtectedRoute>} />
+                  <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

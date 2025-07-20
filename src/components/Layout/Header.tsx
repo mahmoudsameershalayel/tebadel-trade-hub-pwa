@@ -36,18 +36,19 @@ const Header = () => {
     return state.user?.phone || 'User';
   };
 
-  const NavigationLinks = ({ mobile = false, onItemClick = () => {} }) => (
+  const NavigationLinks = ({ mobile = false, onItemClick = () => { } }) => (
     <>
-      <Link
-        to="/"
-        className="text-gray-700 hover:text-emerald-600 transition-colors"
-        onClick={onItemClick}
-      >
-        {t('nav.home')}
-      </Link>
+
       {state.isAuthenticated && (
         <>
-        <Link
+          <Link
+            to="/"
+            className="text-gray-700 hover:text-emerald-600 transition-colors"
+            onClick={onItemClick}
+          >
+            {t('nav.home')}
+          </Link>
+          <Link
             to="/addresses"
             className="text-gray-700 hover:text-emerald-600 transition-colors"
             onClick={onItemClick}
@@ -61,7 +62,6 @@ const Header = () => {
           >
             {t('nav.myItems')}
           </Link>
-          
           <Link
             to="/offers"
             className="text-gray-700 hover:text-emerald-600 transition-colors"
@@ -70,7 +70,7 @@ const Header = () => {
             {t('nav.offers')}
           </Link>
           <Link
-            to="/messages"
+            to="/chat"
             className="text-gray-700 hover:text-emerald-600 transition-colors"
             onClick={onItemClick}
           >
@@ -132,7 +132,7 @@ const Header = () => {
                     <Settings className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
                     {t('nav.profile')}
                   </DropdownMenuItem>
-                  
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
@@ -168,7 +168,7 @@ const Header = () => {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-4">
               <NavigationLinks mobile onItemClick={() => setIsMenuOpen(false)} />
-              
+
               <div className="flex items-center justify-between pt-4 border-t">
                 <Button
                   variant="ghost"

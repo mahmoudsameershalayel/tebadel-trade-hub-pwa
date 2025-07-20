@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { Upload } from 'lucide-react';
+import { ChevronLeft, Clock, Upload } from 'lucide-react';
 import ItemImageModal from './ItemImageModal';
 import {
   Dialog,
@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { ChevronRight } from 'lucide-react';
 
 interface ItemListProps {
   onEdit?: (item: ItemDto) => void;
@@ -89,7 +90,12 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
     setImageModalOpen(true);
   };
 
-  const handleImageUpdated = () => {
+  const handleImagesUpdated = (images) => {
+    if (selectedItem) {
+      // Update the selected item in the items list
+      setItems(prev => prev.map(item => item.id === selectedItem.id ? { ...item, itemImages: images } : item));
+      setSelectedItem({ ...selectedItem, itemImages: images });
+    }
     loadItems();
   };
 
@@ -108,7 +114,7 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
 
   const getStatusText = (status: ItemDto['status']) => {
     switch (status) {
-      case 'Available':
+      case 'Avaliable':
         return t('items.status.available') || 'Available';
       case 'Pending':
         return t('items.status.inExchange') || 'In Exchange';
@@ -149,7 +155,7 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center gap-2 mt-4">
-          <Button variant="outline" onClick={cancelDelete}>
+            <Button variant="outline" onClick={cancelDelete}>
               {t('common.cancel')}
             </Button>
             <Button
@@ -184,15 +190,31 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
               <Card key={item.id} className="cursor-pointer hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <CardTitle className={`text-lg truncate ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <Badge className={getStatusColor(item.status)}>
+                      {getStatusText(item.status)}
+                    </Badge><CardTitle className={`text-lg truncate ${isRTL ? 'text-right' : 'text-left'}`}>
                       {item.title}
                     </CardTitle>
-                    <Badge className={getStatusColor(item.status)}>
-                      {getStatusText(item.status)}
-                    </Badge>
+
+                  
                   </div>
                   <p className={`text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {isRTL ? item.category.nameAR : item.category.nameEN}
+                    {(() => {
+                      const cat = item.category;
+                      if (!cat) return '';
+                      const name = isRTL ? cat.nameAR : cat.nameEN;
+                      if (cat.parent) {
+                        const parentName = isRTL ? cat.parent.nameAR : cat.parent.nameEN;
+                        return (
+                          <span className="inline-flex items-center gap-1">
+                            <span className="font-medium text-gray-500">{parentName}</span>
+                            <ChevronLeft className="inline w-4 h-4 text-gray-400" />
+                            <span className="font-semibold text-gray-900">{name}</span>
+                          </span>
+                        );
+                      }
+                      return <span className="font-semibold text-gray-900">{name}</span>;
+                    })()}
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -217,6 +239,7 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
                       {item.description}
                     </p>
                   )}
+                 
                   <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
                     <Button
                       variant="outline"
@@ -265,7 +288,7 @@ const ItemList: React.FC<ItemListProps> = ({ onEdit, onView }) => {
           isOpen={imageModalOpen}
           onClose={() => setImageModalOpen(false)}
           item={selectedItem}
-          onImageUpdated={handleImageUpdated}
+          onImagesUpdated={handleImagesUpdated}
         />
       )}
     </>

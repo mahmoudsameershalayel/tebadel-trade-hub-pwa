@@ -8,14 +8,36 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { signalRService } from '@/services/signalr-service';
+import { MessageService } from '@/services/message-service';
 import { ChatMessage } from '@/types/message';
 import { Send, MessageCircle } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
+import { jwtDecode } from 'jwt-decode';
 
 interface ChatBoxProps {
   chatPartnerId: string;
   chatPartnerName: string;
   onClose?: () => void;
+}
+
+// Utility to get user id from JWT token
+function getUserIdFromToken() {
+  const token = localStorage.getItem('token');
+  if (!token) return '';
+  try {
+    const decoded: any = jwtDecode(token);
+    console.log('Decoded JWT:', decoded);
+
+    return (
+      decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ||
+      decoded.NameIdentifier ||
+      decoded.userId ||
+      decoded.id ||
+      ''
+    );
+  } catch {
+    return '';
+  }
 }
 
 export const ChatBox: React.FC<ChatBoxProps> = ({
@@ -32,6 +54,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const currentUserId = getUserIdFromToken();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,22 +68,28 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     const initializeChat = async () => {
       try {
         setIsLoading(true);
-        
+
         // Connect to SignalR
         await signalRService.connect();
         setIsConnected(true);
 
-        // Load previous messages
-        const previousMessages = await signalRService.getPreviousMessages(chatPartnerId);
-        
-        // Mark messages as sent/received based on current user
+        // Load previous messages from HTTP endpoint
+        const previousMessages = await MessageService.getPreviousMessages(chatPartnerId);
+
+        // Map MessageDto[] to ChatMessage[]
         const processedMessages = previousMessages.map(msg => ({
-          ...msg,
-          isSent: msg.senderId === authState.user?.id,
+          id: msg.id?.toString() ?? '', // convert number to string
+          content: msg.message ?? '',   // map 'message' to 'content'
+          senderId: msg.senderId,
+          receiverId: msg.receiverId,
+          senderName: msg.senderName ?? '', // fallback if not present
+          receiverName: msg.receiverName ?? '',
+          sentAt: msg.timestamp ? new Date(msg.timestamp) : new Date(), // map 'timestamp' to 'sentAt'
+          isRead: false, // or msg.isRead if available
+          isSent: msg.senderId === currentUserId,
         }));
-        
         setMessages(processedMessages);
-        
+
       } catch (error) {
         console.error('Failed to initialize chat:', error);
         toast({
@@ -74,11 +103,16 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     };
 
     const handleNewMessage = (message: ChatMessage) => {
+      console.log('Received real-time message:', message);
+      console.log('Current user:', currentUserId, 'Chat partner:', chatPartnerId, 'Message sender:', message.senderId, 'Message receiver:', message.receiverId);
       // Only add messages relevant to this chat
-      if (message.senderId === chatPartnerId || message.receiverId === chatPartnerId) {
+      if (
+        (message.senderId === currentUserId && message.receiverId === chatPartnerId) ||
+        (message.senderId === chatPartnerId && message.receiverId === currentUserId)
+      ) {
         const processedMessage = {
           ...message,
-          isSent: message.senderId === authState.user?.id,
+          isSent: message.senderId === currentUserId,
         };
         setMessages(prev => [...prev, processedMessage]);
       }
@@ -93,7 +127,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
     };
 
     initializeChat();
-    
+
     // Set up SignalR event handlers
     signalRService.onMessage(handleNewMessage);
     signalRService.onReconnect(handleReconnect);
@@ -103,7 +137,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
       signalRService.removeMessageHandler(handleNewMessage);
       signalRService.removeReconnectHandler(handleReconnect);
     };
-  }, [chatPartnerId, authState.user?.id, t, toast]);
+
+  }, [chatPartnerId, t, toast]);
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || !isConnected) return;
@@ -116,7 +151,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
       const optimisticMessage: ChatMessage = {
         id: Date.now().toString(),
         content: messageContent,
-        senderId: authState.user?.id || '',
+        senderId: currentUserId || '',
         receiverId: chatPartnerId,
         senderName: authState.user?.firstName || '',
         receiverName: chatPartnerName,
@@ -130,6 +165,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
 
       // Send via SignalR
       await signalRService.sendMessage(chatPartnerId, messageContent);
+      console.log('send messages:', messageContent, 'for chatPartnerId:', chatPartnerId);
+
 
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -149,6 +186,9 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
   };
 
   const formatMessageTime = (date: Date) => {
+    if (!date || isNaN(date.getTime())) {
+      return '';
+    }
     if (isToday(date)) {
       return format(date, 'HH:mm');
     } else if (isYesterday(date)) {
@@ -203,8 +243,11 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
+      <CardContent className="flex-1 flex flex-col p-0 min-h-0">
+        <div
+          ref={scrollAreaRef}
+          className="flex-1 overflow-y-auto px-4 min-h-0"
+        >
           <div className="space-y-4 pb-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
@@ -219,17 +262,15 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
                 >
                   <div className={`max-w-[80%] ${message.isSent ? 'order-1' : 'order-2'}`}>
                     <div
-                      className={`rounded-2xl px-3 py-2 ${
-                        message.isSent
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-foreground'
-                      }`}
+                      className={`rounded-2xl px-3 py-2 ${message.isSent
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-foreground'
+                        }`}
                     >
                       <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     </div>
-                    <div className={`text-xs text-muted-foreground mt-1 ${
-                      message.isSent ? 'text-right' : 'text-left'
-                    }`}>
+                    <div className={`text-xs text-muted-foreground mt-1 ${message.isSent ? 'text-right' : 'text-left'
+                      }`}>
                       {formatMessageTime(message.sentAt)}
                     </div>
                   </div>
@@ -238,7 +279,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({
             )}
             <div ref={messagesEndRef} />
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="p-4 border-t">
           <div className="flex space-x-2">

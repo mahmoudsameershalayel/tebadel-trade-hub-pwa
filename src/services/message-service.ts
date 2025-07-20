@@ -1,18 +1,80 @@
-import { api } from '@/config/api-config';
-import { MessageDto } from '@/types/message';
+import { ChatMessage, MessageDto } from '@/types/message';
+import { API_BASE } from '@/config/api-config.js';
+import { UserDto } from '@/types/user';
 
 export class MessageService {
   static async getPreviousMessages(userId: string): Promise<MessageDto[]> {
-    const response = await api.get(`/messages/previous/${userId}`);
-    return response.data;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${API_BASE}/Customer/ChatMessage/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch previous messages');
+    }
+    const json = await response.json();
+    return json.data;
   }
 
   static async markAsRead(messageIds: string[]): Promise<void> {
-    await api.put('/messages/mark-read', { messageIds });
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${API_BASE}/messages/mark-read`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ messageIds }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to mark messages as read');
+    }
   }
 
   static async getUnreadCount(): Promise<number> {
-    const response = await api.get('/messages/unread-count');
-    return response.data.count;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${API_BASE}/messages/unread-count`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch unread count');
+    }
+    const json = await response.json();
+    return json.data?.count ?? 0;
+  }
+
+  static async getChatPartners(): Promise<ChatMessage[]> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${API_BASE}/Customer/ChatMessage`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch chat partners');
+    }
+    const json = await response.json();
+    return json.data; // Adjust if your API returns a different structure
   }
 }

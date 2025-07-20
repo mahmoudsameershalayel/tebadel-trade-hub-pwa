@@ -10,16 +10,20 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Inbox, Send, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Loading from '@/components/ui/loading';
+import { ChatBox } from '@/components/Chat/ChatBox';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ExchangeRequests = () => {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
+  const { state: authState } = useAuth();
   const [sentRequests, setSentRequests] = useState<ExchangeRequestDto[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<ExchangeRequestDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [chatUser, setChatUser] = useState<{ id: string; name: string } | null>(null);
 
-  const fetchExchangeRequests = async () => {
+    const fetchExchangeRequests = async () => {
     try {
       setRefreshing(true);
       const [sent, received] = await Promise.all([
@@ -95,12 +99,35 @@ const ExchangeRequests = () => {
     }
   };
 
-  if (loading) {
+  const handleStartChat = (userId: string, userName: string) => {
+    setChatUser({ id: userId, name: userName });
+  };
+
+  if (loading || authState.isLoading) {
     return <Loading />;
   }
 
   return (
     <ProtectedRoute>
+      {/* Chat Modal */}
+      {chatUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg shadow-lg p-2 max-w-lg w-full relative">
+            <ChatBox
+              chatPartnerId={chatUser.id}
+              chatPartnerName={chatUser.name}
+              onClose={() => setChatUser(null)}
+            />
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold"
+              onClick={() => setChatUser(null)}
+              aria-label="Close chat"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
@@ -184,6 +211,7 @@ const ExchangeRequests = () => {
                     type="received"
                     onAccept={handleAccept}
                     onReject={handleReject}
+                    onStartChat={handleStartChat}
                   />
                 ))
               )}
@@ -209,6 +237,7 @@ const ExchangeRequests = () => {
                     request={request}
                     type="sent"
                     onCancel={handleCancel}
+                    onStartChat={handleStartChat}
                   />
                 ))
               )}

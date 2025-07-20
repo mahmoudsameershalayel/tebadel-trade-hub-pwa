@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, DollarSign, Calendar } from 'lucide-react';
+import { ArrowRight, Calendar, MessageCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface ExchangeRequestCardProps {
@@ -14,6 +14,21 @@ interface ExchangeRequestCardProps {
   onReject?: (id: number) => void;
   onCancel?: (id: number) => void;
   type: 'sent' | 'received';
+  onStartChat?: (userId: string, userName: string) => void;
+}
+
+function getCurrentUserId() {
+  // Fallback: decode JWT from localStorage
+  const token = localStorage.getItem('token');
+  if (!token) return undefined;
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    // Adjust claim as needed for your backend
+    return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || decoded['sub'] || decoded['id'];
+  } catch {
+    return undefined;
+  }
 }
 
 const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
@@ -21,12 +36,13 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
   onAccept,
   onReject,
   onCancel,
-  type
+  type,
+  onStartChat
 }) => {
   const { t, isRTL } = useLanguage();
-  const { state } = useAuth();
-  
-  const currentUserId = state.user?.id;
+  // Use the custom function for currentUserId
+  const currentUserId = getCurrentUserId();
+  console.log('ExchangeRequestCard debug:', { currentUserId, request });
   const canManage = type === 'received' && request.status === 'Pending';
   const canCancel = type === 'sent' && request.status === 'Pending';
 
@@ -111,15 +127,15 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
         {/* Money Difference */}
         {request.moneyDifference && request.moneyDifference > 0 && (
           <div className={`flex items-center gap-2 rounded-lg p-3 ${isRTL ? 'flex-row-reverse' : 'flex-row'} ${request.moneyDirection === 'Pay' ? 'bg-red-50' : 'bg-green-50'}`}>
-            <DollarSign className={`h-5 w-5 ${request.moneyDirection === 'Pay' ? 'text-red-600' : 'text-green-600'}`} />
+            <span className={`text-2xl font-bold ${request.moneyDirection === 'Pay' ? 'text-red-600' : 'text-green-600'}`}>₪</span>
             <span className={`font-medium ${request.moneyDirection === 'Pay' ? 'text-red-700' : 'text-green-700'} ${isRTL ? 'text-right' : 'text-left'}`}>
               {isRTL ? (
                 request.moneyDirection === 'Pay'
-                  ? `أريد دفع فرق المال: -$${request.moneyDifference}`
-                  : `أريد إستلام فرق المال: +$${request.moneyDifference}`
+                  ? `أريد دفع فرق المال: -₪${request.moneyDifference}`
+                  : `أريد إستلام فرق المال: +₪${request.moneyDifference}`
               ) : (
                 <>
-                  {t('exchange.moneyDifference')}: {request.moneyDirection === 'Pay' ? '-' : '+'}${request.moneyDifference}
+                  {t('exchange.moneyDifference')}: {request.moneyDirection === 'Pay' ? '-' : '+'}₪{request.moneyDifference}
                 </>
               )}
             </span>
@@ -130,6 +146,43 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
         <div className={`flex items-center justify-between text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           <span className={isRTL ? 'text-right' : 'text-left'}>{t('exchange.from')}: {request.offeredByUser.fullName}</span>
           <span className={isRTL ? 'text-right' : 'text-left'}>{t('exchange.to')}: {request.requestedToUser.fullName}</span>
+        </div>
+
+        {/* Start Chat Button */}
+        <div className={`flex justify-end pt-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+          {currentUserId && (
+            <Button
+              aria-label={t('exchange.startChat')}
+              className={
+                'flex items-center gap-2 rounded-full px-5 py-2 shadow-md bg-gradient-to-r from-emerald-500 to-amber-400 text-white font-semibold hover:from-emerald-600 hover:to-amber-500 transition-all ' +
+                (isRTL ? 'flex-row-reverse' : '')
+              }
+              size="sm"
+              onClick={() => {
+                // Determine the other user's id and name
+                let targetUserId = '';
+                let targetUserName = '';
+                if (String(currentUserId) === String(request.offeredByUser.userId)) {
+                  targetUserId = String(request.requestedToUser.userId || '');
+                  targetUserName = request.requestedToUser.fullName || '';
+                } else {
+                  targetUserId = String(request.offeredByUser.userId || '');
+                  targetUserName = request.offeredByUser.fullName || '';
+                }
+                if (!targetUserId) {
+                  alert('Chat partner ID is missing!');
+                  return;
+                }
+                if (typeof onStartChat === 'function') {
+                  onStartChat(targetUserId, targetUserName);
+                }
+              }}
+            >
+              {isRTL ? null : <MessageCircle className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />}
+              {t('exchange.startChat')}
+              {isRTL ? <MessageCircle className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0" /> : null}
+            </Button>
+          )}
         </div>
 
         {/* Action Buttons */}

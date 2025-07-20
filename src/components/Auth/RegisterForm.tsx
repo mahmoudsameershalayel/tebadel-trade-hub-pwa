@@ -24,9 +24,14 @@ const RegisterForm = () => {
     try {
       await register({ firstName, lastName, phone, password });
       toast.success(t('auth.registerSuccess'));
-      navigate('/');
+      console.log('Registration and auto-login succeeded, redirecting...');
+      setTimeout(() => {
+        console.log('Navigating to /');
+        navigate('/');
+      }, 1000);
     } catch (error) {
-      toast.error(t('auth.registerError'));
+      console.error('Registration or auto-login failed:', error);
+      toast.error(error.result?.message || 'Registration failed');
     }
   };
 

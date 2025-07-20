@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, MapPin, Clock, ArrowUpDown } from 'lucide-react';
+import { Heart, MapPin, Clock, ArrowUpDown, ChevronRight, ChevronLeft, Calendar, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,7 @@ interface ItemCardProps {
   item: ItemDto; // Accepts ItemDto or compatible
   onTradeClick?: (item: any) => void;
   onFavoriteClick?: (item: any) => void;
+  onView?: (item: ItemDto) => void;
   isFavorited?: boolean;
 }
 
@@ -31,9 +32,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
   item,
   onTradeClick,
   onFavoriteClick,
+  onView,
   isFavorited = false,
 }) => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   const conditionColors = {
     new: 'bg-green-100 text-green-800',
@@ -57,14 +59,44 @@ const ItemCard: React.FC<ItemCardProps> = ({
   const formatAddress = () => {
     const parts = [];
     if (item.address?.city?.name) parts.push(item.address.city.name);
-    if (item.address?.street) parts.push(item.address.street);
-    if (item.address?.famousSign) parts.push(item.address.famousSign);
-    return parts.join(' - ') || 'No address';
+    return parts.join(' - ') || 'لا يوجد عنوان';
+  };
+
+  // Format category display
+  const formatCategory = () => {
+    if (!item.category) return '';
+    const name = isRTL ? item.category.nameAR : item.category.nameEN;
+    if (item.category.parent) {
+      const parentName = isRTL ? item.category.parent.nameAR : item.category.parent.nameEN;
+      return (
+        <span className="inline-flex items-center gap-1">
+          <span className="font-medium text-gray-500">{parentName}</span>
+          <ChevronLeft className="inline w-4 h-4 text-gray-400" />
+          <span className="font-semibold text-gray-900">{name}</span>
+        </span>
+      );
+    }
+    return <span className="font-semibold text-gray-900">{name}</span>;
   };
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-      <div className="relative">
+    <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer" onClick={() => onView?.(item)}>
+      <div className="relative rounded-lg overflow-hidden shadow-sm w-full h-48 bg-gray-100">
+        {/* Ribbon */}
+        <div className="absolute top-11 left-0 z-20">
+          <div className="relative">
+            <div className="absolute -top-7 -left-10 w-32 transform -rotate-45 bg-amber-400 text-amber-900 text-center font-bold italic shadow-md py-1"
+              style={{ fontSize: '0.70rem', letterSpacing: '0.05em' }}>
+              غرض تجريبي
+            </div>
+          </div>
+        </div>
+        {/* Overlay label above the image */}
+        <div className="absolute top-2 left-2 right-2 flex justify-between z-10 pointer-events-none">
+          <Badge className="bg-gradient-to-r from-emerald-100 to-amber-100 text-emerald-800 border-0 px-3 py-1 rounded-full shadow-sm pointer-events-auto">
+            {formatCategory()}
+          </Badge>
+        </div>
         <div className="aspect-square overflow-hidden rounded-t-lg">
           <img
             src={firstImage}
@@ -72,20 +104,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-        
-        {/* Favorite Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm hover:bg-white"
-          onClick={() => onFavoriteClick?.(item)}
-        >
-          <Heart
-            className={`h-4 w-4 ${
-              isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
-            }`}
-          />
-        </Button>
+
+
       </div>
 
       <CardContent className="p-4">
@@ -97,23 +117,31 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center text-sm text-gray-500 space-x-4 rtl:space-x-reverse">
+          <div className="flex items-center text-sm text-gray-600 space-x-4 rtl:space-x-reverse">
             <div className="flex items-center">
               <MapPin className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
               {formatAddress()}
             </div>
+            {item.createdAtDate && item.createdAtTime && (
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-1" />
+                <span className="text-xs text-gray-600">
+                  {item.createdAtDate}
+                </span>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>by {item.customer.fullName}</span>
-            <Badge variant="outline">{typeof item.category === 'string'
-              ? item.category
-              : ( item.category?.nameAR || item.category?.nameEN || item.category?.id)}
-            </Badge>
+          <div className="flex items-center">
+            <User className="text-gray-600 h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
+            <span className="text-xs text-gray-600">
+              {item.customer.fullName}
+
+            </span>
           </div>
 
           <Button
-            onClick={() => onTradeClick?.(item)}
+            onClick={e => { e.stopPropagation(); onTradeClick?.(item); }}
             className="w-full"
             size="sm"
           >

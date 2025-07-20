@@ -208,7 +208,7 @@ const AddressListPage: React.FC = () => {
                               {t('deleteAddressConfirmation')}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
-                          <AlertDialogFooter>
+                          <AlertDialogFooter className="gap-4">
                           <AlertDialogAction
                               onClick={() => handleDelete(address.id!)}
                               disabled={deletingId === address.id}
@@ -217,7 +217,7 @@ const AddressListPage: React.FC = () => {
                               {deletingId === address.id ? t('deleting') : t('delete')}
                             </AlertDialogAction>
                             <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                          </AlertDialogFooter>
+                        </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>

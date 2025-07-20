@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ItemCard from './ItemCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ItemService } from '@/services/item-service';
 import { CategoryService } from '@/services/category-service';
 import { ItemDto } from '@/types/item';
@@ -21,6 +21,7 @@ import { CategoryDto } from '@/types/category';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { ExchangeService } from '@/services/exchange-service';
 import { useToast } from '@/hooks/use-toast';
+import ItemDetails from './ItemDetails';
 
 interface Item {
   id: string;
@@ -59,8 +60,11 @@ const ItemFeed = () => {
   const [tradeLoading, setTradeLoading] = useState(false);
   const [tradeError, setTradeError] = useState<string | null>(null);
   const [tradeSuccess, setTradeSuccess] = useState<string | null>(null);
-  const [moneyDirection, setMoneyDirection] = useState<'Pay' | 'Receive'>('Pay');
+  const [moneyDirection, setMoneyDirection] = useState<'Pay' | 'Receive' | 'none'>('none');
   const [tradeDescription, setTradeDescription] = useState('');
+  const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const navigate = useNavigate();
 
   // Load categories
   useEffect(() => {
@@ -146,10 +150,8 @@ const ItemFeed = () => {
         const itemCategory = item.category;
         if (itemCategory) {
           if (itemCategory.parent) {
-            // Item is in a subcategory, check if parent matches main category
             matchesCategory = itemCategory.parent.id === mainId;
           } else {
-            // Item is in a main category
             matchesCategory = itemCategory.id === mainId;
           }
         } else {
@@ -166,7 +168,7 @@ const ItemFeed = () => {
     setShowTradeModal(true);
     setSelectedMyItemId('');
     setMoneyDifference('');
-    setMoneyDirection('Pay');
+    setMoneyDirection('none');
     setTradeDescription('');
     setTradeError(null);
     setTradeSuccess(null);
@@ -301,6 +303,10 @@ const ItemFeed = () => {
             item={item}
             onTradeClick={handleTradeClick}
             onFavoriteClick={handleFavoriteClick}
+            onView={item => {
+              setSelectedItem(item);
+              setShowDetails(true);
+            }}
           />
         ))}
       </div>
@@ -329,19 +335,37 @@ const ItemFeed = () => {
           <form onSubmit={handleSubmitTrade} className="space-y-4">
             <div>
               <label className="block mb-1 font-medium">{t('trade.yourItem')}</label>
-              <select
-                className="w-full border rounded p-2"
-                value={selectedMyItemId}
-                onChange={e => setSelectedMyItemId(e.target.value)}
-                required
-              >
-                <option value="">{t('trade.selectYourItemPlaceholder')}</option>
-                {myItems.map(myItem => (
-                  <option key={myItem.id} value={myItem.id}>
-                    {myItem.title}
-                  </option>
-                ))}
-              </select>
+              {myItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 py-4">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="rounded-full"
+                    onClick={() => {
+                      setShowTradeModal(false);
+                      navigate('/post-item');
+                    }}
+                    aria-label={t('items.postNew')}
+                  >
+                    <Plus className="w-6 h-6" />
+                  </Button>
+                  <span className="text-sm text-gray-500">{t('items.createNewItem')}</span>
+                </div>
+              ) : (
+                <Select value={selectedMyItemId} onValueChange={setSelectedMyItemId} required>
+                  <SelectTrigger className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <SelectValue placeholder={t('trade.selectYourItemPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                    {myItems.map(myItem => (
+                      <SelectItem key={myItem.id} value={String(myItem.id)}>
+                        {myItem.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
@@ -357,16 +381,16 @@ const ItemFeed = () => {
               </div>
               <div className="flex-1">
                 <label className="block mb-1 font-medium">{t('trade.moneyDirection')}</label>
-                <select
-                  className="w-full border rounded p-2"
-                  value={moneyDirection}
-                  onChange={e => setMoneyDirection(e.target.value as 'Pay' | 'Receive')}
-                  required
-                >
-                  <option value="">{t('trade.moneyDirectionPlaceholder')}</option>
-                  <option value="Pay">{t('trade.pay')}</option>
-                  <option value="Receive">{t('trade.receive')}</option>
-                </select>
+                <Select value={moneyDirection} onValueChange={val => setMoneyDirection(val as 'Pay' | 'Receive' | 'none')} required>
+                  <SelectTrigger className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <SelectValue placeholder={t('trade.moneyDirectionPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <SelectItem value="none">{t('trade.noDifference')}</SelectItem>
+                    <SelectItem value="Pay">{t('trade.pay')}</SelectItem>
+                    <SelectItem value="Receive">{t('trade.receive')}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
@@ -390,6 +414,17 @@ const ItemFeed = () => {
               </DialogClose>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto">
+          {selectedItem && (
+            <ItemDetails
+              item={selectedItem}
+              onClose={() => setShowDetails(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
