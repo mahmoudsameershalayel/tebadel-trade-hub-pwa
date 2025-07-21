@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage, MessagePayload } from 'firebase/messaging';
 import { firebaseConfig, vapidKey } from '@/config/firebase-config';
-import { API_CONFIG } from '@/config/api-config';
+import { API_BASE } from '@/config/api-config';
 
 class FCMService {
   private app;
@@ -61,7 +61,7 @@ class FCMService {
         throw new Error('No auth token found');
       }
 
-      const response = await fetch(`${API_CONFIG.baseURL}/api/FCMSubscribtion/Subscribe`, {
+      const response = await fetch(`${API_BASE}/api/FCMSubscribtion/Subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ class FCMService {
         return false;
       }
 
-      const response = await fetch(`${API_CONFIG.baseURL}/api/FCMSubscribtion/Unsubscribe`, {
+      const response = await fetch(`${API_BASE}/api/FCMSubscribtion/Unsubscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
