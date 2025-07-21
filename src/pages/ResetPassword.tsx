@@ -17,16 +17,16 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const phoneNumber = location.state?.phoneNumber;
-  const verificationCode = location.state?.verificationCode;
+
+  // Retrieve from sessionStorage
+  const phoneNumber = sessionStorage.getItem('resetPhone');
+  const resetToken = sessionStorage.getItem('resetToken');
 
   React.useEffect(() => {
-    if (!phoneNumber || !verificationCode) {
+    if (!phoneNumber || !resetToken) {
       navigate('/forgot-password');
     }
-  }, [phoneNumber, verificationCode, navigate]);
+  }, [phoneNumber, resetToken, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +48,10 @@ const ResetPassword = () => {
 
     setIsLoading(true);
     try {
-      await resetPassword({ phoneNumber, newPassword });
+      await resetPassword({ phoneNumber, token: resetToken, newPassword });
+      // Clear sessionStorage after successful reset
+      sessionStorage.removeItem('resetToken');
+      sessionStorage.removeItem('resetPhone');
       toast.success(t('resetPassword.resetSuccess') || 'Password reset successfully!');
       navigate('/login');
     } catch (error: any) {
@@ -58,7 +61,7 @@ const ResetPassword = () => {
     }
   };
 
-  if (!phoneNumber || !verificationCode) {
+  if (!phoneNumber || !resetToken) {
     return null;
   }
 

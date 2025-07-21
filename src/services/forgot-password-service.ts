@@ -6,16 +6,17 @@ export interface SendVerificationPayload {
 
 export interface VerifyCodePayload {
   phoneNumber: string;
-  code: string;
+  otp: string;
 }
 
 export interface ResetPasswordPayload {
   phoneNumber: string;
   newPassword: string;
+  token: string;
 }
 
 export async function sendVerificationCode(payload: SendVerificationPayload) {
-  const response = await fetch(`${API_BASE}/account/send-verification-code`, {
+  const response = await fetch(`${API_BASE}/auth/SendOTP`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -28,7 +29,7 @@ export async function sendVerificationCode(payload: SendVerificationPayload) {
 }
 
 export async function verifyCode(payload: VerifyCodePayload) {
-  const response = await fetch(`${API_BASE}/account/verify-code`, {
+  const response = await fetch(`${API_BASE}/Auth/VerifyOTP`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -37,11 +38,11 @@ export async function verifyCode(payload: VerifyCodePayload) {
   if (!response.ok) {
     throw data;
   }
-  return data;
+  return data.data;
 }
 
 export async function resetPassword(payload: ResetPasswordPayload) {
-  const response = await fetch(`${API_BASE}/account/reset-password`, {
+  const response = await fetch(`${API_BASE}/Auth/ResetPasswordTwilio`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

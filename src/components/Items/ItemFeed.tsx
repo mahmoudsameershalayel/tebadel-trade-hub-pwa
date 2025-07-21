@@ -353,18 +353,18 @@ const ItemFeed = () => {
                   <span className="text-sm text-gray-500">{t('items.createNewItem')}</span>
                 </div>
               ) : (
-                <Select value={selectedMyItemId} onValueChange={setSelectedMyItemId} required>
-                  <SelectTrigger className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
-                    <SelectValue placeholder={t('trade.selectYourItemPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
-                    {myItems.map(myItem => (
-                      <SelectItem key={myItem.id} value={String(myItem.id)}>
-                        {myItem.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <Select value={selectedMyItemId} onValueChange={setSelectedMyItemId} required>
+                <SelectTrigger className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                  <SelectValue placeholder={t('trade.selectYourItemPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent className={isRTL ? 'rtl' : ''} dir={isRTL ? 'rtl' : 'ltr'}>
+                  {myItems.map(myItem => (
+                    <SelectItem key={myItem.id} value={String(myItem.id)}>
+                      {myItem.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-4">

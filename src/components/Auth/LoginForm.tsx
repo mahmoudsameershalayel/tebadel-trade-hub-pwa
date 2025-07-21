@@ -9,8 +9,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Package, Lock, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
+const countryOptions = [
+  { code: '+970', flag: '🇵🇸' },
+  // Add more as needed
+];
+
+function stripLeadingZero(phone: string) {
+  return phone.replace(/^0+/, '');
+}
+
 const LoginForm = () => {
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+970');
   const [password, setPassword] = useState('');
   const { login, state } = useAuth();
   const { t, isRTL } = useLanguage();
@@ -19,7 +29,7 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(phone, password);
+      await login(countryCode + stripLeadingZero(phone), password);
       toast.success(t('auth.loginSuccess') || 'Login successful!');
       navigate('/');
     } catch (error) {
@@ -43,17 +53,33 @@ const LoginForm = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="phone">{t('auth.phone')}</Label>
-              <div className="relative">
-                <Phone className="absolute top-1/2 transform -translate-y-1/2 text-amber-500 rtl:right-3 ltr:left-3 h-5 w-5" />
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className="relative">
+                  <select
+                    value={countryCode}
+                    onChange={e => setCountryCode(e.target.value)}
+                    className="h-12 rounded-md border border-gray-300 bg-gray-50 px-2 pr-6 text-lg focus:outline-none appearance-none"
+                    style={{ minWidth: 80, fontFamily: 'inherit' }}
+                    dir="ltr"
+                  >
+                    {countryOptions.map(opt => (
+                      <option key="+972" value="+972">
+                        {opt.flag} {opt.code}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">▼</span>
+                </div>
                 <Input
                   id="phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="ltr:pl-10 rtl:pr-10 rtl:pl-3 ltr:pr-3"
+                  className={`flex-1 h-12 ${isRTL ? 'text-right' : 'text-left'}`}
                   placeholder={t('auth.phoneHolder')}
                   required
                   dir={isRTL ? 'rtl' : 'ltr'}
+                  style={{ borderRadius: 8 }}
                 />
               </div>
             </div>

@@ -9,8 +9,18 @@ import { Phone, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendVerificationCode } from '@/services/forgot-password-service';
 
+const countryOptions = [
+  { code: '+970', flag: '🇵🇸' },
+  // Add more as needed
+];
+
+function stripLeadingZero(phone: string) {
+  return phone.replace(/^0+/, '');
+}
+
 const ForgotPassword = () => {
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+970');
   const [isLoading, setIsLoading] = useState(false);
   const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
@@ -24,9 +34,10 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     try {
-      await sendVerificationCode({ phoneNumber: phone });
+      const formattedPhone = countryCode + stripLeadingZero(phone);
+      await sendVerificationCode({ phoneNumber: formattedPhone });
       toast.success(t('forgotPassword.codeSent') || 'Verification code sent successfully!');
-      navigate('/verify-code', { state: { phoneNumber: phone } });
+      navigate('/verify-code', { state: { phoneNumber: formattedPhone } });
     } catch (error: any) {
       toast.error(error?.message || t('forgotPassword.sendError') || 'Failed to send verification code');
     } finally {
@@ -55,17 +66,33 @@ const ForgotPassword = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="phone">{t('auth.phone')}</Label>
-                <div className="relative">
-                  <Phone className="absolute top-1/2 transform -translate-y-1/2 text-amber-500 rtl:right-3 ltr:left-3 h-5 w-5" />
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className="relative">
+                    <select
+                      value={countryCode}
+                      onChange={e => setCountryCode(e.target.value)}
+                      className="h-12 rounded-md border border-gray-300 bg-gray-50 px-2 pr-6 text-lg focus:outline-none appearance-none"
+                      style={{ minWidth: 80, fontFamily: 'inherit' }}
+                      dir="ltr"
+                    >
+                      {countryOptions.map(opt => (
+                      <option key="+972" value="+972">
+                          {opt.flag} {opt.code}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">▼</span>
+                  </div>
                   <Input
                     id="phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="ltr:pl-10 rtl:pr-10 rtl:pl-3 ltr:pr-3"
+                    className={`flex-1 h-12 ${isRTL ? 'text-right' : 'text-left'}`}
                     placeholder={t('auth.phoneHolder')}
                     required
                     dir={isRTL ? 'rtl' : 'ltr'}
+                    style={{ borderRadius: 8 }}
                   />
                 </div>
               </div>
