@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import Header from "@/components/Layout/Header";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
@@ -96,6 +97,7 @@ const App = () => (
       <LanguageProvider>
         <AuthProvider>
           <BrowserRouter>
+            <NotificationProvider>
             <PWAManager />
             <LocalizedMeta />
             <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -121,6 +123,7 @@ const App = () => (
                 </Routes>
               </main>
             </div>
+            </NotificationProvider>
           </BrowserRouter>
         </AuthProvider>
       </LanguageProvider>

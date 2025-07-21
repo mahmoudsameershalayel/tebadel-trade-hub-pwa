@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { login as loginService, register as registerService } from '@/services/auth-service';
 import { ProfileService } from '@/services/profile-service';
+import { fcmService } from '@/services/fcm-service';
 
 interface User {
   id: string;
@@ -75,7 +76,7 @@ interface AuthContextType {
   state: AuthState;
   login: (phone: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (user: User) => void;
 }
 
@@ -159,7 +160,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Unsubscribe from notifications before logout
+      await fcmService.unsubscribe();
+    } catch (error) {
+      console.error('Error unsubscribing from notifications:', error);
+    }
     dispatch({ type: 'LOGOUT' });
   };
 
