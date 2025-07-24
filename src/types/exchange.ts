@@ -7,7 +7,7 @@ export interface ExchangeRequestDto {
   requestedItem: ItemDto;
   offeredByUser: UserDto;
   requestedToUser: UserDto;
-  status: 'Pending' | 'Accepted' | 'Rejected' | 'Canceled';
+  status: 'Pending' | 'Accepted' | 'Rejected' | 'Canceled' | 'PendingDelivery';
   moneyDirection: 'Pay' | 'Receive';
   description: string;
   moneyDifference?: number;

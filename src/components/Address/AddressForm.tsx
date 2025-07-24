@@ -92,8 +92,11 @@ const AddressForm: React.FC<AddressFormProps> = ({ address, onSave, onCancel }) 
         });
       }
 
-      onSave?.();
-      navigate('/addresses');
+      if (onSave) {
+        onSave();
+      } else {
+        navigate('/addresses');
+      }
     } catch (error) {
       toast({
         title: t('error'),

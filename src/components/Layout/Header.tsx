@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import NotificationBell from './NotificationBell';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -96,8 +97,8 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 rtl:space-x-reverse">
-            <Package className="h-8 w-8 text-emerald-600" />
-            <span className="text-xl font-bold text-gray-900">Tebadel</span>
+            <img src="/img/logo.png" alt={t('app.mainTitle')} className="h-8 w-8" />
+            <span className="text-xl font-bold text-gray-900">{t('app.mainTitle')}</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -117,6 +118,8 @@ const Header = () => {
               <Globe className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
               {language.toUpperCase()}
             </Button>
+            {/* Show NotificationBell only for logged-in users */}
+            {state.isAuthenticated && <NotificationBell />}
 
             {/* Auth Actions */}
             {state.isAuthenticated ? (

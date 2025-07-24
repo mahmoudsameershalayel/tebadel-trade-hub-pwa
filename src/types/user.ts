@@ -1,7 +1,7 @@
 export interface UserDto {
   userId: string | number;
   fullName: string;
-  phone: string;
+  phoneNumber: string;
 }
 
 export interface RegisterPayload {

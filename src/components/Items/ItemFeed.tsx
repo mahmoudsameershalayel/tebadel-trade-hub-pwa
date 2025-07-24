@@ -61,7 +61,7 @@ const ItemFeed = () => {
   const [tradeError, setTradeError] = useState<string | null>(null);
   const [tradeSuccess, setTradeSuccess] = useState<string | null>(null);
   const [moneyDirection, setMoneyDirection] = useState<'Pay' | 'Receive' | 'none'>('none');
-  const [tradeDescription, setTradeDescription] = useState('');
+  const [tradeDescription, setTradeDescription] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const navigate = useNavigate();
@@ -188,7 +188,7 @@ const ItemFeed = () => {
     setTradeError(null);
     setTradeSuccess(null);
     try {
-      if (!selectedMyItemId || !moneyDirection || !tradeDescription) {
+      if (!selectedMyItemId || !moneyDirection) {
         setTradeError(t('trade.fillAllFields'));
         setTradeLoading(false);
         return;
@@ -198,7 +198,7 @@ const ItemFeed = () => {
           requestedItemId: Number(selectedTradeItem!.id),
           moneyDifference: moneyDifference ? Number(moneyDifference) : undefined,
           moneyDirection: moneyDirection === 'Pay' ? 1 : 2,
-          description: tradeDescription,
+          description: tradeDescription || undefined,
       });
       setTradeSuccess(t('trade.offerSent'));
       setShowTradeModal(false);
@@ -423,6 +423,17 @@ const ItemFeed = () => {
             <ItemDetails
               item={selectedItem}
               onClose={() => setShowDetails(false)}
+              onMakeOffer={() => {
+                setShowDetails(false);
+                setSelectedTradeItem(selectedItem);
+                setShowTradeModal(true);
+                setSelectedMyItemId('');
+                setMoneyDifference('');
+                setMoneyDirection('none');
+                setTradeDescription('');
+                setTradeError(null);
+                setTradeSuccess(null);
+              }}
             />
           )}
         </DialogContent>

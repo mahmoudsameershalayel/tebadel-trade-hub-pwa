@@ -318,7 +318,7 @@ const LandingPage = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{t('landing.contact.phone')}</h3>
-                      <p className="text-gray-600">+966 50 123 4567</p>
+                      <p className="text-gray-600 text-right">+970594857483</p>
                     </div>
                   </div>
                 </CardContent>

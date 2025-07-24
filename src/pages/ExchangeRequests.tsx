@@ -50,7 +50,7 @@ const ExchangeRequests = () => {
 
   const handleAccept = async (id: number) => {
     try {
-      await ExchangeService.updateExchangeRequest(id, { action: 1 });
+      await ExchangeService.updateExchangeRequest(id, { action: 2 });
       toast({
         title: t('exchange.success'),
         description: t('exchange.acceptSuccess'),
@@ -67,7 +67,7 @@ const ExchangeRequests = () => {
 
   const handleReject = async (id: number) => {
     try {
-      await ExchangeService.updateExchangeRequest(id, { action: 2 });
+      await ExchangeService.updateExchangeRequest(id, { action: 4 });
       toast({
         title: t('exchange.success'),
         description: t('exchange.rejectSuccess'),

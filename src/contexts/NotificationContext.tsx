@@ -4,6 +4,7 @@ import { fcmService } from '@/services/fcm-service';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
 
 interface NotificationContextType {
   isSupported: boolean;
@@ -33,10 +34,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     fcmService.isSupported() ? Notification.permission : 'denied'
   );
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [hasShownNotificationToast, setHasShownNotificationToast] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { state } = useAuth();
   const { user } = state;
+  const { t } = useLanguage();
 
   const isSupported = fcmService.isSupported();
 
@@ -93,20 +96,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     try {
       const success = await fcmService.subscribe();
       setIsSubscribed(success);
-      
-      if (success) {
-        toast({
-          title: 'Notifications Enabled',
-          description: 'You will receive push notifications for important updates.',
-        });
-      }
-      
+      // Removed: Do not show 'Notifications Enabled' toast ever
       return success;
     } catch (error) {
       console.error('Error subscribing to notifications:', error);
       toast({
-        title: 'Subscription Failed',
-        description: 'Unable to enable notifications. Please try again.',
+        title: t('notifications.failed'),
+        description: t('notifications.failedDescription'),
         variant: 'destructive',
       });
       return false;

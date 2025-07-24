@@ -23,6 +23,11 @@ const ItemImageModal: React.FC<ItemImageModalProps> = ({
   // Add local state for images
   const [images, setImages] = useState<ItemImageDto[]>(item.itemImages || []);
 
+  // Reset images state when item changes
+  React.useEffect(() => {
+    setImages(item.itemImages || []);
+  }, [item.id]);
+
   // Update local state and call parent callback
   const handleImagesUpdated = (updatedImages: ItemImageDto[]) => {
     setImages(updatedImages);

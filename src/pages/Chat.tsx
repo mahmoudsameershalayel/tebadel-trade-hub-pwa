@@ -81,40 +81,40 @@ const ChatPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Sidebar */}
-      <aside className="w-64 bg-card border-r flex flex-col">
+    <div className="min-h-screen flex flex-col md:flex-row bg-background">
+      {/* Chat list as horizontal bar on small screens, sidebar on md+ */}
+      <aside className="w-full md:w-64 bg-card border-b md:border-b-0 md:border-r flex md:flex-col">
         <Card className="flex-1 rounded-none border-0">
           <CardHeader>
             <CardTitle>{t('nav.messages')}</CardTitle>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col gap-2 p-2">
-            <div className="flex-1 overflow-y-auto max-h-[calc(100vh-100px)]">
-            {loading ? (
-              <div className="text-muted-foreground text-center mt-8">{t('common.loading')}</div>
-            ) : error ? (
-              <div className="text-destructive text-center mt-8">{error}</div>
-            ) : uniquePartners.length === 0 ? (
-              <div className="text-muted-foreground text-center mt-8">{t('chat.noMessagesYet')}</div>
-            ) : (
-              uniquePartners.map(partner => (
-                <Button
-                  key={String(partner.userId)}
-                  variant={String(selectedUser?.userId) === String(partner.userId) ? 'default' : 'outline'}
-                  className="justify-start w-full flex items-center gap-2"
-                  onClick={() => setSelectedUser(partner)}
-                >
-                  <Avatar className="h-8 w-8">
-                    {/* Try to use imageURL if available, fallback to initials */}
-                    {('imageURL' in partner && (partner as any).imageURL) ? (
-                      <AvatarImage src={(partner as any).imageURL} alt={partner.fullName} />
-                    ) : null}
-                    <AvatarFallback>{getInitials(partner.fullName)}</AvatarFallback>
-                  </Avatar>
-                  <span className="truncate">{partner.fullName}</span>
-                </Button>
-              ))
-            )}
+            <div className="flex md:flex-col flex-row md:overflow-y-auto overflow-x-auto whitespace-nowrap">
+              {loading ? (
+                <div className="text-muted-foreground text-center mt-8">{t('common.loading')}</div>
+              ) : error ? (
+                <div className="text-destructive text-center mt-8">{error}</div>
+              ) : uniquePartners.length === 0 ? (
+                <div className="text-muted-foreground text-center mt-8">{t('chat.noMessagesYet')}</div>
+              ) : (
+                uniquePartners.map(partner => (
+                  <Button
+                    key={String(partner.userId)}
+                    variant={String(selectedUser?.userId) === String(partner.userId) ? 'default' : 'outline'}
+                    className="md:w-full w-48 md:mb-2 mb-0 mr-2 md:mr-0 justify-start flex items-center gap-2"
+                    onClick={() => setSelectedUser(partner)}
+                  >
+                    <Avatar className="h-8 w-8">
+                      {/* Try to use imageURL if available, fallback to initials */}
+                      {('imageURL' in partner && (partner as any).imageURL) ? (
+                        <AvatarImage src={(partner as any).imageURL} alt={partner.fullName} />
+                      ) : null}
+                      <AvatarFallback>{getInitials(partner.fullName)}</AvatarFallback>
+                    </Avatar>
+                    <span className="truncate">{partner.fullName}</span>
+                  </Button>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

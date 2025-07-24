@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage, MessagePayload } from 'firebase/messaging';
 import { firebaseConfig, vapidKey } from '@/config/firebase-config';
 import { API_BASE } from '@/config/api-config';
+import { ProfileService } from './profile-service';
 
 class FCMService {
   private app;
@@ -61,13 +62,10 @@ class FCMService {
         throw new Error('No auth token found');
       }
 
-      const response = await fetch(`${API_BASE}/api/FCMSubscribtion/Subscribe`, {
+      const response = await fetch(`${API_BASE}/FCMSubscribtion/Subscribe`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        },
-        body: JSON.stringify({ token })
+        headers: ProfileService.getAuthHeaders(),
+        body: JSON.stringify({ "FCMToken" : token })
       });
 
       if (!response.ok) {
@@ -89,12 +87,9 @@ class FCMService {
         return false;
       }
 
-      const response = await fetch(`${API_BASE}/api/FCMSubscribtion/Unsubscribe`, {
+      const response = await fetch(`${API_BASE}/FCMSubscribtion/Unsubscribe`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        },
+        headers: ProfileService.getAuthHeaders(),
         body: JSON.stringify({ token: this.currentToken })
       });
 
@@ -119,13 +114,13 @@ class FCMService {
   handleNotificationClick(data: any, navigate: (path: string) => void) {
     if (!data) return;
 
-    const { id, type } = data;
+    const { id, notificationType	 } = data;
     
-    if (!id || !type) return;
+    if (!id || !notificationType	) return;
 
     // Route based on notification type
-    switch (type) {
-      case 'exchange_request':
+    switch (notificationType	) {
+      case 'ExchangeRequest':
         navigate('/exchange-requests');
         break;
       case 'chat':

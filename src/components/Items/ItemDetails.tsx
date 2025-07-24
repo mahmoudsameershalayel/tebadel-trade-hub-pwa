@@ -11,9 +11,10 @@ interface ItemDetailsProps {
   item: ItemDto;
   onEdit?: () => void;
   onClose?: () => void;
+  onMakeOffer?: () => void;
 }
 
-const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
+const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose, onMakeOffer }) => {
   const { t, isRTL } = useLanguage();
   const [currentImage, setCurrentImage] = useState(0);
   const [fade, setFade] = useState(true);
@@ -185,13 +186,7 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
           {formatAddress()}
         </div>
         
-        <div className="flex items-center justify-between">
-          <span className="flex items-center">
-            <User className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
-            {item.customer.fullName}
-          </span>
-          <span className="text-muted-foreground text-xs">{item.customer.phone}</span>
-        </div>
+       
         {item.createdAtDate && item.createdAtTime && (
           <div className="flex items-center">
             <Calendar className="h-4 w-4 mr-1" />
@@ -206,11 +201,15 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item, onEdit, onClose }) => {
 
 
         <div className={`flex flex-col gap-2 pt-4 sm:flex-row sm:gap-4 ${isRTL ? 'sm:flex-row-reverse sm:justify-end' : 'sm:flex-row sm:justify-start'}`}>
-          {onEdit && (
+          {onMakeOffer ? (
+            <Button onClick={onMakeOffer} className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold shadow-md">
+              {t('trade.makeOffer')}
+            </Button>
+          ) : onEdit ? (
             <Button onClick={onEdit} className="flex-1">
               {t('myItems.edit')}
             </Button>
-          )}
+          ) : null}
           <Button onClick={handleShowQr} className="flex-1" variant="secondary" disabled={qrLoading}>
             {qrLoading ? t('myItems.qrLoading') : t('myItems.showQr')}
           </Button>

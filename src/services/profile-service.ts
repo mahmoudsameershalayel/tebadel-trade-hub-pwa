@@ -1,9 +1,10 @@
 import { UserProfileDto, UpdateProfileDto } from '@/types/profile';
 import { API_BASE } from '../config/api-config.js';
+import { getCurrentLanguage } from '@/lib/utils';
 
 
 export class ProfileService {
-  private static getAuthHeaders() {
+  public static getAuthHeaders() {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('Authentication token not found');
@@ -11,6 +12,7 @@ export class ProfileService {
     return {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
+      'Accept-Language': getCurrentLanguage(),
     };
   }
 

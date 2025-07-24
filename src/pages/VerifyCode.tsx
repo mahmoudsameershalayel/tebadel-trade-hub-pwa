@@ -118,6 +118,8 @@ const VerifyCode = () => {
                       ref={el => (inputsRef.current[idx] = el)}
                       className="w-12 h-12 text-center text-lg font-bold tracking-widest"
                       autoFocus={idx === 0}
+                      dir="ltr"
+                      style={{ direction: 'ltr' }}
                     />
                   ))}
                 </div>
