@@ -5,6 +5,7 @@ import { ArrowRight, Package, Users, Shield, Zap, Star, Phone, Mail, MessageSqua
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import LandingSubscriptionSection from './LandingSubscriptionSection';
 
 const LandingPage = () => {
   const { t } = useLanguage();
@@ -294,6 +295,9 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Subscription Plans Section */}
+      <LandingSubscriptionSection />
 
       {/* Contact Section */}
       <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white">

@@ -189,6 +189,17 @@ const translations = {
       "Join our community today and discover the joy of sustainable trading.",
     "landing.ctaButton": "Create Your Account",
 
+    // Subscription Plans
+    "subscription.title": "Subscription Plans",
+    "subscription.subtitle": "Choose the plan that suits you",
+    "subscription.free": "Free",
+    "subscription.popular": "Most Popular",
+    "subscription.maxItems": "Max Items",
+    "subscription.maxRequests": "Max Trade Requests",
+    "subscription.realTimeChat": "Real-Time Chat",
+    "subscription.subscribe": "Subscribe Now",
+    "subscription.demoNotice": "Demo data shown - API endpoint not available",
+
     // Items
     "items.title": "Available Items",
     "items.search": "Search items...",
@@ -629,6 +640,17 @@ const translations = {
     "landing.ctaSubtitle":
       "انضم إلى مجتمعنا اليوم واكتشف متعة التبادل المستدام.",
     "landing.ctaButton": "أنشئ حسابك",
+
+    // Subscription Plans
+    "subscription.title": "خطط الاشتراك",
+    "subscription.subtitle": "اختر الخطة التي تناسبك",
+    "subscription.free": "مجانًا",
+    "subscription.popular": "الأكثر شعبية",
+    "subscription.maxItems": "عدد العناصر",
+    "subscription.maxRequests": "عدد طلبات التبادل",
+    "subscription.realTimeChat": "دردشة مباشرة",
+    "subscription.subscribe": "اشترك الآن",
+    "subscription.demoNotice": "بيانات تجريبية - واجهة برمجة التطبيقات غير متاحة",
 
     // Items
     "items.title": "الأغراض المتاحة",
