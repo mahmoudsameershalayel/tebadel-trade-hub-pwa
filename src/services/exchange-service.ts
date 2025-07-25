@@ -51,6 +51,18 @@ export class ExchangeService {
     return json.data;
   }
 
+  static async completeExchangeRequest(id: number): Promise<boolean> {
+    const response = await fetch(`${API_BASE}/Customer/ExchangeRequests/complete/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+    const json = await response.json();
+    if (!response.ok || json.result?.code !== 200) {
+      throw new Error(json.result?.message || 'Failed to cancel exchange request');
+    }
+    return json.data;
+  }
+
   static async getAllExchangeRequests(): Promise<ExchangeRequestDto[]> {
     const response = await fetch(`${API_BASE}/Customer/ExchangeRequests`, {
       method: 'GET',

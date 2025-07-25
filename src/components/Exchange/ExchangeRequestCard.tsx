@@ -13,6 +13,7 @@ interface ExchangeRequestCardProps {
   onAccept?: (id: number) => void;
   onReject?: (id: number) => void;
   onCancel?: (id: number) => void;
+  onComplete?: (id: number) => void;
   type: "sent" | "received";
   onStartChat?: (userId: string, userName: string) => void;
 }
@@ -42,6 +43,7 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
   onAccept,
   onReject,
   onCancel,
+  onComplete,
   type,
   onStartChat,
 }) => {
@@ -49,6 +51,7 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
   // Use the custom function for currentUserId
   const currentUserId = getCurrentUserId();
   console.log("ExchangeRequestCard debug:", { currentUserId, request });
+  const canComplete = request.requestedToUser.userId === getCurrentUserId()  && request.status === "PendingDelivery";
   const canManage = type === "received" && request.status === "Pending";
   const canCancel = type === "sent" && request.status === "Pending";
 
@@ -333,6 +336,16 @@ const ExchangeRequestCard: React.FC<ExchangeRequestCardProps> = ({
                   className="flex-1"
                 >
                   {t("exchange.reject")}
+                </Button>
+              </>
+            )}
+            {canComplete && (
+              <>
+                <Button
+                  onClick={() => onComplete?.(request.id)}
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                >
+                  {t("exchange.complete")}
                 </Button>
               </>
             )}

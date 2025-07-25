@@ -82,6 +82,23 @@ const ExchangeRequests = () => {
     }
   };
 
+  const handleComplete = async (id: number) => {
+    try {
+      await ExchangeService.updateExchangeRequest(id, { action: 2 });
+      toast({
+        title: t('exchange.success'),
+        description: t('exchange.completeSuccess'),
+      });
+      fetchExchangeRequests();
+    } catch (error) {
+      toast({
+        title: t('exchange.error'),
+        description: error instanceof Error ? error.message : t('exchange.completeError'),
+        variant: 'destructive',
+      });
+    }
+  };
+
   const handleCancel = async (id: number) => {
     try {
       await ExchangeService.cancelExchangeRequest(id);
@@ -211,6 +228,7 @@ const ExchangeRequests = () => {
                     type="received"
                     onAccept={handleAccept}
                     onReject={handleReject}
+                    onComplete={handleComplete}
                     onStartChat={handleStartChat}
                   />
                 ))

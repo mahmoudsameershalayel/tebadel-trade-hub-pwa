@@ -405,10 +405,10 @@ const translations = {
     "exchange.cancelError": "Failed to cancel exchange request",
     "exchange.noReceivedRequests": "No Received Requests",
     "exchange.noReceivedRequestsDesc":
-      "You have not received any exchange requests yet",
+    "You have not received any exchange requests yet",
     "exchange.noSentRequests": "No Sent Requests",
     "exchange.noSentRequestsDesc":
-      "You have not sent any exchange requests yet",
+    "You have not sent any exchange requests yet",
     "exchange.heroAlt": "Exchange and trading",
     "myItems.category": "Category",
     "myItems.owner": "Owner",
@@ -416,12 +416,14 @@ const translations = {
     "myItems.preferredExchange": "Preferred Exchange",
     "myItems.edit": "Edit Item",
     "myItems.close": "Close",
+
     // QR Code
     "myItems.showQr": "Show QR Code",
     "myItems.hideQr": "Hide QR Code",
     "myItems.qrLoading": "Loading QR...",
     "myItems.qrError": "Failed to load QR code",
     "myItems.qrAlt": "Item QR code",
+
     // Item Image
     "itemImage.heading": "Item Image",
     "itemImage.noImage": "No image uploaded",
@@ -444,7 +446,7 @@ const translations = {
     "items.descriptionPlaceholder": "Enter item description",
     "items.preferredExchangeNote": "Preferred Exchange Note",
     "items.preferredExchangeNotePlaceholder":
-      "Enter your preferred exchange details",
+    "Enter your preferred exchange details",
     "items.categoryPlaceholder": "Select a category",
     "items.saving": "Saving...",
     "items.updateSuccess": "Item updated successfully",
@@ -479,8 +481,7 @@ const translations = {
 
     // App Title & Description
     "app.title": "منصة تبادل - نظام المقايضة الحديث",
-    "app.description":
-      "قم بتبادل الأغراض على منصة تبادل - نظام المقايضة الحديث",
+    "app.description":"قم بتبادل الأغراض على منصة تبادل - نظام المقايضة الحديث",
 
     // Auth
     "auth.welcome": "مرحباً بك في تبادل",
@@ -650,7 +651,8 @@ const translations = {
     "subscription.maxRequests": "عدد طلبات التبادل",
     "subscription.realTimeChat": "دردشة مباشرة",
     "subscription.subscribe": "اشترك الآن",
-    "subscription.demoNotice": "بيانات تجريبية - واجهة برمجة التطبيقات غير متاحة",
+    "subscription.demoNotice":
+      "بيانات تجريبية - واجهة برمجة التطبيقات غير متاحة",
 
     // Items
     "items.title": "الأغراض المتاحة",
@@ -814,6 +816,10 @@ const translations = {
     "exchange.rejectError": "فشل في رفض طلب التبادل",
     "exchange.cancelSuccess": "تم إلغاء طلب التبادل بنجاح",
     "exchange.cancelError": "فشل في إلغاء طلب التبادل",
+    "exchange.complete" : "تم إكمال التبادل",
+    'exchange.completeSuccess' : "تم إكمال التبادل بنجاح",
+    'exchange.completeError' : "فشل في إكمال التبادل",
+    
     // Address
     selectCity: "اختر المدينة",
     hideMap: "إخفاء الخريطة",
